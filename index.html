@@ -22,35 +22,41 @@
   <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
-  <!-- <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-firestore.js"></script> -->
+  <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-storage.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-firestore.js"></script>
 </head>
 
 <input class = "upload" id="audio_file" type="file" accept="audio/*"></input>
 
 <body>
-  <div class="player">
-    <!-- <div class="details">
-      <div class="now-playing">PLAYING x OF y</div>
-      <div class="track-art"></div>
-      <div class="track-name">Track Name</div>
-      <div class="track-artist">Track Artist</div>
-    </div> -->
-    <div class="buttons"> 
-      <div class="playpause-track" onclick="playpauseTrack()"><i class="fas fa-play"></i></div>
-      <div class="marker" onclick="mark()"><i class="fas fa-map-pin"></i></div>
-    </div>
-    <div id='markbar'></div>
-    <div class="slider_container">
-      <div class="current-time">00:00</div>
-      <input type="range" min="0" max="100000" value="0" class="slider" onchange="seekTo()" onmousedown="stopUpdate()"
-      onmouseup = "startUpdate()">
-      <div class="total-duration">00:00</div>
-    </div>
+  <div class = "style">
+    <div class="player">
+      <!-- <div class="details">
+        <div class="now-playing">PLAYING x OF y</div>
+        <div class="track-art"></div>
+        <div class="track-name">Track Name</div>
+        <div class="track-artist">Track Artist</div>
+      </div> -->
+      <div class="buttons"> 
+        <div class="playpause-track" onclick="playpauseTrack()"><i class="fas fa-play"></i></div>
+        <div class="marker" onclick="mark()"><i class="fas fa-map-pin"></i></div>
+      </div>
+      <div id='markbar'>
+        <!-- <i id="1" class="fas fa-map-marker" style="position: absolute; left: 1361px; top:395px; transform: scale(0.7, 1); color: rgb(223, 16, 16);"><span class="hw">1.05</span></i> -->
+      </div>
+      <div class="slider_container">
+        <div class="current-time">00:00</div>
+        <input type="range" min="0" max="100000" value="0" class="slider" onchange="seekTo()" onmousedown="stopUpdate()"
+        onmouseup = "startUpdate()">
+        <div class="total-duration">00:00</div>
+      </div>
 
+    </div>
   </div>
   <hr>
+
         <!-- authentication -->
-        <div>
+        <div class = "bootstrap.min">
         <!-- login form -->
         <div class="container" id="signin-form">
             <div class="card card-body"><form>

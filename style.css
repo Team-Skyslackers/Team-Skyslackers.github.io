@@ -105,8 +105,15 @@ body {
   width: 30%;
 } */
 
-.current-time, .total-duration {
+.current-time {
   padding: 10px;
+  position:absolute;
+  left: 10px;
+}
+.total-duration {
+  padding: 10px;
+  position:absolute;
+  right: 10px;
 }
 
 i.fa-volume-down, i.fa-volume-up {

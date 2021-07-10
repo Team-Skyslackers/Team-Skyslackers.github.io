@@ -66,6 +66,7 @@ function SigninUser(email, password){
 // Google signin function
 var provider = new firebase.auth.GoogleAuthProvider();
 // provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+
 function GoogleSignin(){
   firebase.auth()
   .signInWithPopup(provider)
@@ -158,8 +159,16 @@ let csvText = '';
 let strings = "";
 let table_str = "";
 let pin_num = 0;
-let leftpx = 74;
-let rightpx = 1354;
+let leftpx = 67;
+let rightpx = 1359;
+// let leftpx = 74;
+// let rightpx = 1354;
+isChrome = (navigator.userAgent.indexOf("Chrome")!=-1);
+let offset = 395;
+// console.log(isChrome);
+if (isChrome) {
+  offset = 383;
+}
 
 
 
@@ -190,7 +199,8 @@ function draw(item, index) {
     "</a>" ;
     document.getElementById("markbar").innerHTML = strings
     document.getElementById((index+1).toString(10)).style.position = "absolute";
-    document.getElementById((index+1).toString(10)).style.left = (curr_progress+74).toString(10) + "px";
+    document.getElementById((index+1).toString(10)).style.left = (curr_progress+68).toString(10) + "px";
+    document.getElementById((index+1).toString(10)).style.top = offset.toString(10) + "px";
     document.getElementById((index+1).toString(10)).style.transform = "scale(0.7,1)";
     document.getElementById((index+1).toString(10)).style.color = "rgb(223,16,16)";
     table_str = "<tr><th>No.</th><th>Time</th><th>Pos</th></tr>" + "<tr id = t"+ (index+1).toString(10) + "><td>"+
@@ -216,7 +226,8 @@ function draw(item, index) {
     "</a>" ;
     document.getElementById("markbar").innerHTML += strings
     document.getElementById((index+1).toString(10)).style.position = "absolute";
-    document.getElementById((index+1).toString(10)).style.left = (curr_progress+74).toString(10) + "px";
+    document.getElementById((index+1).toString(10)).style.left = (curr_progress+68).toString(10) + "px";
+    document.getElementById((index+1).toString(10)).style.top = offset.toString(10) + "px";
     document.getElementById((index+1).toString(10)).style.transform = "scale(0.7,1)";
     document.getElementById((index+1).toString(10)).style.color = "rgb(223,16,16)";
     table_str = "<tr id = t"+ (index+1).toString(10) + "><td>"+
@@ -235,9 +246,10 @@ function draw(item, index) {
 }
 // Load the first track in the tracklist
 let duration;
+var file;
 // loadTrack(track_index);
 audio_file.onchange = function() {
-  var file = this.files[0]
+  file = this.files[0]
   var reader = new FileReader();
   var context = new(window.AudioContext || window.webkitAudioContext)();
   reader.onload = function() {
@@ -309,7 +321,6 @@ function jump(e) {
 function submit_data(){
   for (let idx = 0; idx < pinned.length; idx++) {
     output.push([pinned[idx],document. getElementById("i"+(idx+1).toString(10)).value]);
-    console.log(output);
   }
 
 
@@ -319,12 +330,21 @@ function submit_data(){
   });
 
   console.log(csvText);
-  let link = document.createElement('a');
-  link.id = 'download-csv';
-  link.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(csvText));
-  link.setAttribute('download', 'yourfiletextgoeshere.csv');
-  document.body.appendChild(link);
-  document.querySelector('#download-csv').click();
+  window.URL = window.webkitURL || window.URL;
+  var contentType = 'text/csv';
+  var csvFile = new Blob([csvText], {type: contentType});
+  const ref1 = firebase.storage().ref().child('musicFile/map.csv');
+  // [START storage_upload_blob]
+  // 'file' comes from the Blob or File API
+  ref1.put(csvFile).then((snapshot) => {
+    console.log('Uploaded a blob or file!');
+  });
+  const ref2 = firebase.storage().ref().child('musicFile/song.csv');
+  // [START storage_upload_blob]
+  // 'file' comes from the Blob or File API
+  ref2.put(file).then((snapshot) => {
+    console.log('Uploaded a blob or file!');
+  });
   // console.log(document.getElementById("i1").value)
 }
 
