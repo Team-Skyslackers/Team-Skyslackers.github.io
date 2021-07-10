@@ -9,6 +9,20 @@
 
   <!-- Load the custom CSS style file -->
   <link rel="stylesheet" type="text/css" href="style.css">
+
+  <!-- jQuery CDN minified -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+  <!-- BootStrap CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+  
+  <!-- Firebase CDN -->
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
+  <!-- <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-firestore.js"></script> -->
 </head>
 
 <input class = "upload" id="audio_file" type="file" accept="audio/*"></input>
@@ -32,13 +46,83 @@
       onmouseup = "startUpdate()">
       <div class="total-duration">00:00</div>
     </div>
-    <!-- <div class="slider_container">
-      <i class="fa fa-volume-down"></i>
-      <input type="range" min="1" max="100" value="99" class="volume_slider" onchange="setVolume()">
-      <input type="range" min="1" max="100" value="99" class="volume_slider" onchange="setVolume()">
-      <i class="fa fa-volume-up"></i>
-    </div> -->
+
   </div>
+  <hr>
+        <!-- authentication -->
+        <div>
+        <!-- login form -->
+        <div class="container" id="signin-form">
+            <div class="card card-body"><form>
+                <div class="mb-3">
+                  <label for="inputEmail" class="form-label">Email address</label>
+                  <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp">
+                </div>
+                <div class="mb-3">
+                  <label for="inputPassword" class="form-label">Password</label>
+                  <input type="password" class="form-control" id="inputPassword">
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="button" id="signin-button" class="btn btn-primary" onclick="SigninUser($('#inputEmail').val(), $('#inputPassword').val())">
+                        Sign in
+                    </button>
+                    <button type="button" id="google-signin-button" class="btn btn-info" onclick="GoogleSignin()">
+                        Sign in with Google
+                    </button>
+                    <button type="button" id="show-register-button" class="btn btn-warning"
+                        onclick=" $('#signin-form').addClass('d-none'); $('#registration-form').removeClass('d-none'); ">
+                        Create new account
+                    </button>
+                  </div>
+              </form>
+            </div>
+        </div>
+
+        <!-- register form -->
+        <div class="container d-none" id="registration-form">
+            <div class="card card-body"><form>
+                <div class="mb-3">
+                  <label for="inputRegEmail" class="form-label">Email address</label>
+                  <input type="email" class="form-control" id="inputRegEmail" aria-describedby="emailHelp">
+                </div>
+                <div class="mb-3">
+                  <label for="inputRegPassword" class="form-label">Password</label>
+                  <input type="password" class="form-control" id="inputRegPassword">
+                </div>
+                <div class="mb-3">
+                  <label for="confirmRegPassword" class="form-label">Confirm Password</label>
+                  <input type="password" class="form-control" id="confirmRegPassword">
+                </div>
+                <!-- <div class="mb-3 form-check">
+                  <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                  <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                </div> -->
+                <div class="d-grid gap-2">
+                    <button type="button" id="register-button" class="btn btn-warning" 
+                        onclick="RegisterUser($('#inputRegEmail').val(), $('#inputRegPassword').val(), $('#confirmRegPassword').val())">
+                        Create new account
+                    </button>
+                    <button type="button" id="hide-register-button" class="btn btn-primary" 
+                        onclick=" $('#signin-form').removeClass('d-none'); $('#registration-form').addClass('d-none'); ">
+                        Already have an account?
+                    </button>
+                  </div>
+              </form>
+            </div>
+        </div>
+
+        <!-- logout button -->
+        <div class="container d-none" id="signout-form">
+            <div class="d-grid gap-2">
+                <button id="signout-button" type="button" class="btn btn-primary" onclick="SignOut()">
+                    Sign out
+                </button>
+            </div>
+        </div>
+
+        <hr>
+
+
   <button class = "but" id = "b1" onclick="submit_data()">SUBMIT</button>
   <table id='tbl' class = "tbl_des"></table>  
   <!-- Load the main script for the player -->
