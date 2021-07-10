@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skyslackers Map Maker</title>
+  <!-- Load FontAwesome icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+
+  <!-- Load the custom CSS style file -->
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<input class = "upload" id="audio_file" type="file" accept="audio/*"></input>
+
+<body>
+  <div class="player">
+    <!-- <div class="details">
+      <div class="now-playing">PLAYING x OF y</div>
+      <div class="track-art"></div>
+      <div class="track-name">Track Name</div>
+      <div class="track-artist">Track Artist</div>
+    </div> -->
+    <div class="buttons"> 
+      <div class="playpause-track" onclick="playpauseTrack()"><i class="fas fa-play"></i></div>
+      <div class="marker" onclick="mark()"><i class="fas fa-map-pin"></i></div>
+    </div>
+    <div id='markbar'></div>
+    <div class="slider_container">
+      <div class="current-time">00:00</div>
+      <input type="range" min="0" max="100000" value="0" class="slider" onchange="seekTo()" onmousedown="stopUpdate()"
+      onmouseup = "startUpdate()">
+      <div class="total-duration">00:00</div>
+    </div>
+    <!-- <div class="slider_container">
+      <i class="fa fa-volume-down"></i>
+      <input type="range" min="1" max="100" value="99" class="volume_slider" onchange="setVolume()">
+      <input type="range" min="1" max="100" value="99" class="volume_slider" onchange="setVolume()">
+      <i class="fa fa-volume-up"></i>
+    </div> -->
+  </div>
+  <button class = "but" id = "b1" onclick="submit_data()">SUBMIT</button>
+  <table id='tbl' class = "tbl_des"></table>  
+  <!-- Load the main script for the player -->
+  <script src="main.js"></script>
+</body>
+</html>
