@@ -323,7 +323,7 @@ function jump(e) {
 
 function submit_data(){
   for (let idx = 0; idx < pinned.length; idx++) {
-    output.push([pinned[idx],document. getElementById("i"+(idx+1).toString(10)).value]);
+    output.push([pinned[idx],document.getElementById("i"+(idx+1).toString(10)).value]);
   }
 
 
