@@ -111,13 +111,7 @@
     <hr>
     <input class = "upload" id="audio_file" type="file" accept="audio/*"></input>
     <div class="player">
-      <!-- <div class="details">
-        <div class="now-playing">PLAYING x OF y</div>
-        <div class="track-art"></div>
-        <div class="track-name">Track Name</div>
-        <div class="track-artist">Track Artist</div>
-      </div> -->
-      <div class="buttons"> 
+      <div style="display: flex; flex-direction: row; align-items: center;"> 
         <div class="playpause-track" onclick="playpauseTrack()"><i class="fas fa-play"></i></div>
         <div class="marker" onclick="mark()"><i class="fas fa-map-pin"></i></div>
       </div>
@@ -125,16 +119,21 @@
         <!-- <i id="1" class="fas fa-map-marker" style="position: absolute; left: 1361px; top:395px; transform: scale(0.7, 1); color: rgb(223, 16, 16);"><span class="hw">1.05</span></i> -->
       </div>
       <div class="slider_container">
-        <div class="current-time">00:00</div>
+        <div id="current-time" style="padding: 10px;">00:00</div>
         <input id="music-slider" type="range" min="0" max="100000" value="0" class="slider" onchange="seekTo()" onmousedown="stopUpdate()"
         onmouseup = "startUpdate()">
-        <div class="total-duration">00:00</div>
+        <div id="total-duration" style="padding: 10px;">00:00</div>
       </div>
 
     </div>
 
-    <button class = "but" id = "b1" onclick="submit_data()">SUBMIT</button>
-    <table id='tbl' class = "tbl_des"></table>  
+    <!-- marked positions -->
+    <hr>
+    <table id='tbl' class = "table table-hover" style="margin: auto; text-align: center;"></table>
+    <hr>
+    <div class="d-grid gap-2 col-2 mx-auto">
+      <button class = "btn btn-primary" onclick="submit_data()">SUBMIT</button>
+    </div>
   </div>
   
   <!-- Load the main script for the player -->

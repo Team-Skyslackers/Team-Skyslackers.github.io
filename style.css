@@ -13,43 +13,6 @@ body {
   justify-content: center;
 }
 
-.details {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  justify-content: center;
-  margin-top: 25px;
-}
-/* .upload {
-  display: block;
-} */
-.track-art {
-  margin: 25px;
-  height: 250px;
-  width: 250px;
-  background-image: url("https://images.pexels.com/photos/262034/pexels-photo-262034.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260");
-  background-size: cover;
-  border-radius: 15%;
-}
-
-.now-playing {
-  font-size: 1rem;
-}
-
-.track-name {
-  font-size: 3rem;
-}
-
-.track-artist {
-  font-size: 1.5rem;
-}
-
-.buttons {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
 .playpause-track {
   padding: 25px;
   opacity: 0.8;
@@ -101,43 +64,12 @@ body {
   width: 90%;
 }
 
-/* .volume_slider {
-  width: 30%;
-} */
-
-.current-time {
-  padding: 10px;
-  position:absolute;
-  left: 10px;
-}
-.total-duration {
-  padding: 10px;
-  position:absolute;
-  right: 10px;
-}
-
 i.fa-volume-down, i.fa-volume-up {
   padding: 10px;
 }
 
 i.fa-play-circle, i.fa-pause-circle, i.fa-step-forward, i.fa-step-backward {
   cursor: pointer;
-}
-
-.tbl_des {
-  width: 50%;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.but {
-  text-align: center;
-  margin:auto;
-  display: flex;
-}
-
-td {
-  text-align: center;
 }
 
 .hw {

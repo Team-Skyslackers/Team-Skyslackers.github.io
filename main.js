@@ -138,16 +138,10 @@ firebase.auth().onAuthStateChanged((user) => {
   }
 });
 
-let now_playing = document.querySelector(".now-playing");
-let track_art = document.querySelector(".track-art");
-let track_name = document.querySelector(".track-name");
-let track_artist = document.querySelector(".track-artist");
-console.log(now_playing)
 let playpause_btn = document.querySelector(".playpause-track");
-
-let slider = document.querySelector(".slider");
-let curr_time = document.querySelector(".current-time");
-let total_duration = document.querySelector(".total-duration");
+let slider = $("#music-slider");
+let curr_time = $("#current-time");
+let total_duration = $("#total-duration");
 
 let track_index = 0;
 let isPlaying = false;
@@ -166,9 +160,9 @@ let pin_num = 0;
 
 
 function resetValues() {
-  curr_time.textContent = "00:00";
-  total_duration.textContent = "00:00";
-  slider.value = 0;
+  curr_time.text("00:00");
+  total_duration.text("00:00");
+  slider.val(0);
 }
 
 function mark(){
@@ -185,14 +179,13 @@ function draw(item, index) {
   let leftpx = $("#music-slider").position().left;
   let rightpx = leftpx + $("#music-slider").width();
   let pin_pos = item/duration * (rightpx-leftpx) + leftpx;
-  console.log(pin_pos);
 
   markerPinHTML = "<a  id = " + (index+1).toString(10) + " href = \"#a"+ 
     (index+1).toString(10) +"\" onclick=\"jump(event)\">"+ "<i class=\"fas fa-map-marker\">"+
     "<span class=\"hw\">"+ (Math.round(item*100)/100).toString(10) +"</span></i>"+"</a>" ;
   if (index == 0) {
     $("#markbar").html("");
-    $("#tbl").html("<tr><th>No.</th><th>Time</th><th>Pos</th></tr>");
+    $("#tbl").html("<tr><th>No.</th><th>Time</th><th>Pos</th><th>Delete</th></tr>");
   }
   $("#markbar").append(markerPinHTML);
   $('#'+(index + 1)).css({
@@ -203,7 +196,7 @@ function draw(item, index) {
   })
   markerTableHTML = "<tr id = t"+ (index+1).toString(10) + "><td>"+(index+1).toString(10)+
     "<a id = a"+ (index+1).toString(10) +"></a>" + "</td><td>"+ (Math.round(item*100)/100).toString(10)+ 
-    "</td><td><textarea class=\"in\" id=i" + (index+1).toString(10) +"></textarea></td>"+
+    "</td><td><input id=i" + (index+1).toString(10) +"></input></td>"+
     "<td><i class=\"fas fa-trash-alt\" id=\"d"+(index+1).toString(10)+
     "\" onclick = \"deletepin(event)\"" + "></i></td>"+ "</tr>";
   $("#tbl").append(markerTableHTML);
@@ -219,14 +212,10 @@ audio_file.onchange = function() {
   reader.onload = function() {
     context.decodeAudioData(reader.result, function(buffer) {
       duration = buffer.duration;
-      console.log(buffer.duration);
-      console.log(duration); 
     });
   };
   reader.readAsArrayBuffer(file);
-  // console.log(this.files[0]);
   // let curr_track = document.createElement('audio');
-  // console.log(URL.createObjectURL(this.files[0]));
   curr_track.src = URL.createObjectURL(this.files[0]);
   curr_track.load();
   // curr_track.play();
@@ -234,7 +223,6 @@ audio_file.onchange = function() {
   resetValues();
   updateTimer = setInterval(seekUpdate, 10);
 }
-// console.log(curr_track);
 
 function stopUpdate() {
   isUpdating = false;
@@ -309,34 +297,12 @@ function submit_data(){
   ref2.put(file).then((snapshot) => {
     console.log('Uploaded a blob or file!');
   });
-  // console.log(document.getElementById("i1").value)
 }
-
-
-// function nextTrack() {
-//   if (track_index < track_list.length - 1)
-//     track_index += 1;
-//   else track_index = 0;
-//   loadTrack(track_index);
-//   playTrack();
-// }
-
-// function prevTrack() {
-//   if (track_index > 0)
-//     track_index -= 1;
-//   else track_index = track_list.length;
-//   loadTrack(track_index);
-//   playTrack();
-// }
 
 function seekTo() {
-  let seekto = duration * (slider.value / 100001);
+  let seekto = duration * (slider.val() / 100001);
   curr_track.currentTime = seekto;
 }
-
-// function setVolume() {
-//   curr_track.volume = volume_slider.value / 100;
-// }
 
 function seekUpdate() {
   if (isUpdating) {
@@ -345,7 +311,7 @@ function seekUpdate() {
     if (!isNaN(duration)) {
       seekPosition = curr_track.currentTime * (100001 / duration);
 
-      slider.value = seekPosition;
+      slider.val(seekPosition)
 
       let currentMinutes = Math.floor(curr_track.currentTime / 60);
       let currentSeconds = Math.floor(curr_track.currentTime - currentMinutes * 60);
@@ -357,8 +323,8 @@ function seekUpdate() {
       if (currentMinutes < 10) { currentMinutes = "0" + currentMinutes; }
       if (durationMinutes < 10) { durationMinutes = "0" + durationMinutes; }
 
-      curr_time.textContent = currentMinutes + ":" + currentSeconds;
-      total_duration.textContent = durationMinutes + ":" + durationSeconds;
+      curr_time.text(currentMinutes + ":" + currentSeconds);
+      total_duration.text(durationMinutes + ":" + durationSeconds);
     }
   }
 }
