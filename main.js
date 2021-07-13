@@ -159,19 +159,9 @@ let curr_track = document.createElement('audio');
 let pinned = [];
 let output = [];
 let csvText = '';
-let strings = "";
-let table_str = "";
+let markerPinHTML = "";
+let markerTableHTML = "";
 let pin_num = 0;
-let leftpx = 67;
-let rightpx = 1359;
-// let leftpx = 74;
-// let rightpx = 1354;
-isChrome = (navigator.userAgent.indexOf("Chrome")!=-1);
-let offset = 395;
-// console.log(isChrome);
-if (isChrome) {
-  offset = 383;
-}
 
 
 
@@ -185,67 +175,38 @@ function mark(){
   let curr_time = curr_track.currentTime;
   pinned.push(curr_time);
   pinned = pinned.sort((a, b) => a - b);
-  console.log(pinned);
+  // console.log(pinned);
   pin_num += 1;
   pinned.forEach(draw);
   
 }
 
 function draw(item, index) {
-  if (index == 0) {
-    console.log(index)
-    let curr_progress = Math.floor(item*(rightpx-leftpx+1)/duration); 
-    strings = "<a href = \"#a"+ (index+1).toString(10) +"\" onclick=\"jump(event)\">"+
-    "<i id = " + (index+1).toString(10) + " class=\"fas fa-map-marker\">"+
-    "<span class=\"hw\">"+
-    + (Math.round(item*100)/100).toString(10) +"</span></i>"+
-    "</a>" ;
-    document.getElementById("markbar").innerHTML = strings
-    document.getElementById((index+1).toString(10)).style.position = "absolute";
-    document.getElementById((index+1).toString(10)).style.left = (curr_progress+68).toString(10) + "px";
-    document.getElementById((index+1).toString(10)).style.top = offset.toString(10) + "px";
-    document.getElementById((index+1).toString(10)).style.transform = "scale(0.7,1)";
-    document.getElementById((index+1).toString(10)).style.color = "rgb(223,16,16)";
-    table_str = "<tr><th>No.</th><th>Time</th><th>Pos</th></tr>" + "<tr id = t"+ (index+1).toString(10) + "><td>"+
-    (index+1).toString(10)+
-    "<a id = a"+ (index+1).toString(10) +"></a>" + 
-    "</td><td>"+ (Math.round(item*100)/100).toString(10)+ 
-    "</td><td><textarea class=\"in\" id=i" + 
-    (index+1).toString(10) +"></textarea></td>"+
-    "<td><i class=\"fas fa-trash-alt\" id=\"d"+(index+1).toString(10)+
-    "\" onclick = \"deletepin(event)\"" +
-    "></i></td>"+
-    "</tr>";
-    document.getElementById("tbl").innerHTML = table_str
-    // console.log(document.getElementById("tbl").innerHTML)
-  }
-  else {
-    console.log(index)
-    let curr_progress = Math.floor(item*(rightpx-leftpx+1)/duration);
-    strings = "<a href = \"#a"+ (index+1).toString(10) +"\" onclick=\"jump(event)\">"+
-    "<i id = " + (index+1).toString(10) + " class=\"fas fa-map-marker\">"+
-    "<span class=\"hw\">"+
-    + (Math.round(item*100)/100).toString(10) +"</span></i>"+
-    "</a>" ;
-    document.getElementById("markbar").innerHTML += strings
-    document.getElementById((index+1).toString(10)).style.position = "absolute";
-    document.getElementById((index+1).toString(10)).style.left = (curr_progress+68).toString(10) + "px";
-    document.getElementById((index+1).toString(10)).style.top = offset.toString(10) + "px";
-    document.getElementById((index+1).toString(10)).style.transform = "scale(0.7,1)";
-    document.getElementById((index+1).toString(10)).style.color = "rgb(223,16,16)";
-    table_str = "<tr id = t"+ (index+1).toString(10) + "><td>"+
-    (index+1).toString(10)+
-    "<a id = a"+ (index+1).toString(10) +"></a>" + 
-    "</td><td>"+ (Math.round(item*100)/100).toString(10)+ 
-    "</td><td><textarea class=\"in\" id=i" + 
-    (index+1).toString(10) +"></textarea></td>"+
-    "<td><i class=\"fas fa-trash-alt\" id=\"d"+(index+1).toString(10)+
-    "\" onclick = \"deletepin(event)\"" +
-    "></i></td>"+
-    "</tr>";
-    document.getElementById("tbl").innerHTML += table_str
-  }
+  let leftpx = $("#music-slider").position().left;
+  let rightpx = leftpx + $("#music-slider").width();
+  let pin_pos = item/duration * (rightpx-leftpx) + leftpx;
+  console.log(pin_pos);
 
+  markerPinHTML = "<a  id = " + (index+1).toString(10) + " href = \"#a"+ 
+    (index+1).toString(10) +"\" onclick=\"jump(event)\">"+ "<i class=\"fas fa-map-marker\">"+
+    "<span class=\"hw\">"+ (Math.round(item*100)/100).toString(10) +"</span></i>"+"</a>" ;
+  if (index == 0) {
+    $("#markbar").html("");
+    $("#tbl").html("<tr><th>No.</th><th>Time</th><th>Pos</th></tr>");
+  }
+  $("#markbar").append(markerPinHTML);
+  $('#'+(index + 1)).css({
+    position: 'absolute',
+    left: (pin_pos - $('#'+(index + 1)).width()/2) + "px",
+    transform: "scale(0.7,1)",
+    color: "rgb(223,16,16)"
+  })
+  markerTableHTML = "<tr id = t"+ (index+1).toString(10) + "><td>"+(index+1).toString(10)+
+    "<a id = a"+ (index+1).toString(10) +"></a>" + "</td><td>"+ (Math.round(item*100)/100).toString(10)+ 
+    "</td><td><textarea class=\"in\" id=i" + (index+1).toString(10) +"></textarea></td>"+
+    "<td><i class=\"fas fa-trash-alt\" id=\"d"+(index+1).toString(10)+
+    "\" onclick = \"deletepin(event)\"" + "></i></td>"+ "</tr>";
+  $("#tbl").append(markerTableHTML);
 }
 // Load the first track in the tracklist
 let duration;
@@ -306,8 +267,8 @@ function deletepin(e) {
     pinned.forEach(draw);
   }
   else {
-    document.getElementById("tbl").innerHTML = '';
-    document.getElementById("markbar").innerHTML = '';
+    $("#tbl").html("");
+    $("#markbar").html("");
   }
   
 }
