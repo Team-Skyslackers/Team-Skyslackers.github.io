@@ -115,11 +115,13 @@ firebase.auth().onAuthStateChanged((user) => {
           lastLoginDateAndTimeUTC: getUTCDateAndTime()
       });
 
-      // ws.send("uid:" + user.uid);
+      // set welcome text
+      $("#welcome-text").text("Hi, "+currentUser.email);
 
       $("#signin-form").addClass("d-none");
       $("#registration-form").addClass("d-none");
       $("#signout-form").removeClass("d-none");
+      $("#music-editor").removeClass("d-none");
 
       console.log(user.email + " has signed in");
       // ...
@@ -130,6 +132,7 @@ firebase.auth().onAuthStateChanged((user) => {
       $("#signin-form").removeClass("d-none");
       $("#registration-form").addClass("d-none");
       $("#signout-form").addClass("d-none");
+      $("#music-editor").addClass("d-none");
 
       console.log("No user signed in")
   }

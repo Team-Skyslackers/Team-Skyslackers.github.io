@@ -26,111 +26,118 @@
   <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-firestore.js"></script>
 </head>
 
-<input class = "upload" id="audio_file" type="file" accept="audio/*"></input>
-
 <body>
-  <div class = "style">
-    <div class="player">
-      <!-- <div class="details">
-        <div class="now-playing">PLAYING x OF y</div>
-        <div class="track-art"></div>
-        <div class="track-name">Track Name</div>
-        <div class="track-artist">Track Artist</div>
-      </div> -->
-      <div class="buttons"> 
-        <div class="playpause-track" onclick="playpauseTrack()"><i class="fas fa-play"></i></div>
-        <div class="marker" onclick="mark()"><i class="fas fa-map-pin"></i></div>
-      </div>
-      <div id='markbar'>
-        <!-- <i id="1" class="fas fa-map-marker" style="position: absolute; left: 1361px; top:395px; transform: scale(0.7, 1); color: rgb(223, 16, 16);"><span class="hw">1.05</span></i> -->
-      </div>
-      <div class="slider_container">
-        <div class="current-time">00:00</div>
-        <input type="range" min="0" max="100000" value="0" class="slider" onchange="seekTo()" onmousedown="stopUpdate()"
-        onmouseup = "startUpdate()">
-        <div class="total-duration">00:00</div>
-      </div>
-
-    </div>
+  <div class="container">
+    <h1><strong>Skyslackers</strong> online music editor</h1>
   </div>
   <hr>
 
-        <!-- authentication -->
-        <div class = "bootstrap.min">
-        <!-- login form -->
-        <div class="container" id="signin-form">
-            <div class="card card-body"><form>
-                <div class="mb-3">
-                  <label for="inputEmail" class="form-label">Email address</label>
-                  <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp">
-                </div>
-                <div class="mb-3">
-                  <label for="inputPassword" class="form-label">Password</label>
-                  <input type="password" class="form-control" id="inputPassword">
-                </div>
-                <div class="d-grid gap-2">
-                    <button type="button" id="signin-button" class="btn btn-primary" onclick="SigninUser($('#inputEmail').val(), $('#inputPassword').val())">
-                        Sign in
-                    </button>
-                    <button type="button" id="google-signin-button" class="btn btn-info" onclick="GoogleSignin()">
-                        Sign in with Google
-                    </button>
-                    <button type="button" id="show-register-button" class="btn btn-warning"
-                        onclick=" $('#signin-form').addClass('d-none'); $('#registration-form').removeClass('d-none'); ">
-                        Create new account
-                    </button>
-                  </div>
-              </form>
+  <!-- authentication -->
+  <!-- login form -->
+  <div class="container" id="signin-form">
+    <h2>please login to start editting</h2>
+      <div class="card card-body"><form>
+          <div class="mb-3">
+            <label for="inputEmail" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp">
+          </div>
+          <div class="mb-3">
+            <label for="inputPassword" class="form-label">Password</label>
+            <input type="password" class="form-control" id="inputPassword">
+          </div>
+          <div class="d-grid gap-2">
+              <button type="button" id="signin-button" class="btn btn-primary" onclick="SigninUser($('#inputEmail').val(), $('#inputPassword').val())">
+                  Sign in
+              </button>
+              <button type="button" id="google-signin-button" class="btn btn-info" onclick="GoogleSignin()">
+                  Sign in with Google
+              </button>
+              <button type="button" id="show-register-button" class="btn btn-warning"
+                  onclick=" $('#signin-form').addClass('d-none'); $('#registration-form').removeClass('d-none'); ">
+                  Create new account
+              </button>
             </div>
-        </div>
+        </form>
+      </div>
+  </div>
 
-        <!-- register form -->
-        <div class="container d-none" id="registration-form">
-            <div class="card card-body"><form>
-                <div class="mb-3">
-                  <label for="inputRegEmail" class="form-label">Email address</label>
-                  <input type="email" class="form-control" id="inputRegEmail" aria-describedby="emailHelp">
-                </div>
-                <div class="mb-3">
-                  <label for="inputRegPassword" class="form-label">Password</label>
-                  <input type="password" class="form-control" id="inputRegPassword">
-                </div>
-                <div class="mb-3">
-                  <label for="confirmRegPassword" class="form-label">Confirm Password</label>
-                  <input type="password" class="form-control" id="confirmRegPassword">
-                </div>
-                <!-- <div class="mb-3 form-check">
-                  <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                  <label class="form-check-label" for="exampleCheck1">Check me out</label>
-                </div> -->
-                <div class="d-grid gap-2">
-                    <button type="button" id="register-button" class="btn btn-warning" 
-                        onclick="RegisterUser($('#inputRegEmail').val(), $('#inputRegPassword').val(), $('#confirmRegPassword').val())">
-                        Create new account
-                    </button>
-                    <button type="button" id="hide-register-button" class="btn btn-primary" 
-                        onclick=" $('#signin-form').removeClass('d-none'); $('#registration-form').addClass('d-none'); ">
-                        Already have an account?
-                    </button>
-                  </div>
-              </form>
+  <!-- register form -->
+  <div class="container d-none" id="registration-form">
+      <div class="card card-body"><form>
+          <div class="mb-3">
+            <label for="inputRegEmail" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="inputRegEmail" aria-describedby="emailHelp">
+          </div>
+          <div class="mb-3">
+            <label for="inputRegPassword" class="form-label">Password</label>
+            <input type="password" class="form-control" id="inputRegPassword">
+          </div>
+          <div class="mb-3">
+            <label for="confirmRegPassword" class="form-label">Confirm Password</label>
+            <input type="password" class="form-control" id="confirmRegPassword">
+          </div>
+          <!-- <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+            <label class="form-check-label" for="exampleCheck1">Check me out</label>
+          </div> -->
+          <div class="d-grid gap-2">
+              <button type="button" id="register-button" class="btn btn-warning" 
+                  onclick="RegisterUser($('#inputRegEmail').val(), $('#inputRegPassword').val(), $('#confirmRegPassword').val())">
+                  Create new account
+              </button>
+              <button type="button" id="hide-register-button" class="btn btn-primary" 
+                  onclick=" $('#signin-form').removeClass('d-none'); $('#registration-form').addClass('d-none'); ">
+                  Already have an account?
+              </button>
             </div>
+        </form>
+      </div>
+  </div>
+
+  <!-- logout button -->
+  <div class="container d-none" id="signout-form">
+    <div class="d-grid gap-2">
+      <H2 id="welcome-text">
+          Hi, anonymous user.
+      </H2>
+      <button id="signout-button" type="button" class="btn btn-primary" onclick="SignOut()">
+          Sign out
+      </button>
+    </div>
+  </div>
+
+  <!-- music editor -->
+  <div class="container d-none" id="music-editor">
+    <input class = "upload" id="audio_file" type="file" accept="audio/*"></input>
+    <div class ="style">
+      <div class="player">
+        <!-- <div class="details">
+          <div class="now-playing">PLAYING x OF y</div>
+          <div class="track-art"></div>
+          <div class="track-name">Track Name</div>
+          <div class="track-artist">Track Artist</div>
+        </div> -->
+        <div class="buttons"> 
+          <div class="playpause-track" onclick="playpauseTrack()"><i class="fas fa-play"></i></div>
+          <div class="marker" onclick="mark()"><i class="fas fa-map-pin"></i></div>
         </div>
-
-        <!-- logout button -->
-        <div class="container d-none" id="signout-form">
-            <div class="d-grid gap-2">
-                <button id="signout-button" type="button" class="btn btn-primary" onclick="SignOut()">
-                    Sign out
-                </button>
-            </div>
+        <div id='markbar'>
+          <!-- <i id="1" class="fas fa-map-marker" style="position: absolute; left: 1361px; top:395px; transform: scale(0.7, 1); color: rgb(223, 16, 16);"><span class="hw">1.05</span></i> -->
         </div>
+        <div class="slider_container">
+          <div class="current-time">00:00</div>
+          <input type="range" min="0" max="100000" value="0" class="slider" onchange="seekTo()" onmousedown="stopUpdate()"
+          onmouseup = "startUpdate()">
+          <div class="total-duration">00:00</div>
+        </div>
+  
+      </div>
+    </div>
 
-        <hr>
-
-
-  <button class = "but" id = "b1" onclick="submit_data()">SUBMIT</button>
-  <table id='tbl' class = "tbl_des"></table>  
+    <button class = "but" id = "b1" onclick="submit_data()">SUBMIT</button>
+    <table id='tbl' class = "tbl_des"></table>  
+  </div>
+  
   <!-- Load the main script for the player -->
   <script src="main.js"></script>
 </body>
