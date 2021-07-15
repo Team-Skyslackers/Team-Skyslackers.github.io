@@ -190,7 +190,8 @@ function draw(item, index) {
   $("#markbar").append(markerPinHTML);
   $('#'+(index + 1)).css({
     position: 'absolute',
-    left: (pin_pos - $('#'+(index + 1)).width()/2) + "px",
+    left: pin_pos - $('#'+(index + 1)).width()/2 + "px",
+    top: $('#music-slider').position().top - $('#'+(index + 1)).height() + "px",
     transform: "scale(0.7,1)",
     color: "rgb(223,16,16)"
   })
