@@ -280,7 +280,8 @@ function jump(e) {
   }, 1000);
 }
 
-function submit_data(){
+async function submit_data(){
+
   for (let idx = 0; idx < pinned.length; idx++) {
     output.push([pinned[idx],document.getElementById("i"+(idx+1).toString(10)).value]);
   }
@@ -307,6 +308,38 @@ function submit_data(){
   ref2.put(file).then((snapshot) => {
     console.log('Uploaded a blob or file!');
   });
+  let map_url;
+  let song_url
+  const p1 = ref1.getDownloadURL();
+  await p1.then((url)=> {
+    // console.log(url);
+    map_url = url;
+  });
+  const p2 = ref2.getDownloadURL();
+  await p2.then((url)=>{
+    // console.log(url);
+    song_url = url;
+  });
+  // console.log(map_url);
+  // console.log(song_url);
+  console.log(currentUser.uid);
+  DB.ref('songs/song').set({
+    details: {
+      author: currentUser.uid,
+      creationTime: getUTCDateAndTime()
+    },
+    
+    difficulty: document.getElementById("LOD").value,
+
+    storageLink: {
+      csv: map_url,
+      mp3: song_url
+    },
+
+    title: document.getElementById("name").value
+
+  })
+
 }
 
 function seekTo() {
