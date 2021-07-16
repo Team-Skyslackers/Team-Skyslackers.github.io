@@ -5,6 +5,16 @@ body {
   transition: background-color .5s;
 }
 
+#current-time{
+  position: 'absolute';
+  width: 60px;
+}
+
+#total-duration{
+  position: 'absolute';
+  box-sizing: '';
+}
+
 .player {
   height: 20vh;
   display: flex;
@@ -26,6 +36,7 @@ body {
 }
 
 .slider_container {
+  position:"absolute";
   width: 100%;
   max-width: 5000rpx;
   display: flex;
@@ -64,9 +75,6 @@ body {
   width: 90%;
 }
 
-i.fa-volume-down, i.fa-volume-up {
-  padding: 10px;
-}
 
 i.fa-play-circle, i.fa-pause-circle, i.fa-step-forward, i.fa-step-backward {
   cursor: pointer;

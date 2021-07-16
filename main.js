@@ -179,6 +179,16 @@ function draw(item, index) {
   let leftpx = $("#music-slider").position().left;
   let rightpx = leftpx + $("#music-slider").width();
   let pin_pos = item/duration * (rightpx-leftpx) + leftpx;
+  
+  let ct_pos = leftpx - 20;
+
+  $("#current-time").css({
+    left: "20px",
+    top: $("#music-slider").position().top + "px"
+  })
+  // $("#total-duration").css({
+  //   position: 'absolute'
+  // })
 
   markerPinHTML = "<a  id = " + (index+1).toString(10) + " href = \"#a"+ 
     (index+1).toString(10) +"\" onclick=\"jump(event)\">"+ "<i class=\"fas fa-map-marker\">"+
@@ -195,8 +205,8 @@ function draw(item, index) {
     transform: "scale(0.7,1)",
     color: "rgb(223,16,16)"
   })
-  markerTableHTML = "<tr id = t"+ (index+1).toString(10) + "><td>"+(index+1).toString(10)+
-    "<a id = a"+ (index+1).toString(10) +"></a>" + "</td><td>"+ (Math.round(item*100)/100).toString(10)+ 
+  markerTableHTML = "<tr id = t"+ (index+1).toString(10) + "><td width=\"200px\">"+(index+1).toString(10)+
+    "<a id = a"+ (index+1).toString(10) +"></a>" + "</td><td width=\"200px\">"+ (Math.round(item*100)/100).toString(10)+ 
     "</td><td><input id=i" + (index+1).toString(10) +"></input></td>"+
     "<td><i class=\"fas fa-trash-alt\" id=\"d"+(index+1).toString(10)+
     "\" onclick = \"deletepin(event)\"" + "></i></td>"+ "</tr>";
@@ -263,11 +273,10 @@ function deletepin(e) {
 }
 
 function jump(e) {
-  console.log("hi")
-  document.getElementById("t"+e.target.id).style.backgroundColor = "rgb(100,200,200)";
+  document.getElementById("t"+e.target.offsetParent.id).style.backgroundColor = "rgb(100,200,200)";
   setTimeout(function() { 
     console.log("bye");
-    document.getElementById("t"+e.target.id).style.backgroundColor = "";
+    document.getElementById("t"+e.target.offsetParent.id).style.backgroundColor = "";
   }, 1000);
 }
 
