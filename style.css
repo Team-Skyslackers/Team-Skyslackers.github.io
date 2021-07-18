@@ -1,8 +1,13 @@
 body {
   background-color: rgb(151, 151, 151);
-
+  /* overflow: hidden; */
   /* Smoothly transition the background color */
   transition: background-color .5s;
+}
+
+#data {
+  overflow: auto;
+  height: 250px;
 }
 
 #current-time{
@@ -25,6 +30,12 @@ body {
 
 .playpause-track {
   padding: 25px;
+  opacity: 0.8;
+
+  /* Smoothly transition the opacity */
+  transition: opacity .2s;
+}
+.undo .marker {
   opacity: 0.8;
 
   /* Smoothly transition the opacity */

@@ -112,6 +112,7 @@
     <input class = "upload" id="audio_file" type="file" accept="audio/*"></input>
     <div class="player">
       <div style="display: flex; flex-direction: row; align-items: center;"> 
+        <div class = "undo" onclick = "undo()"><i class="fas fa-undo"></i></div>
         <div class="playpause-track" onclick="playpauseTrack()"><i class="fas fa-play"></i></div>
         <div class="marker" onclick="mark()"><i class="fas fa-map-pin"></i></div>
       </div>
@@ -128,27 +129,29 @@
     </div>
 
     <!-- marked positions -->
-    <hr>
-    <table id='tbl' class = "table table-hover" style="margin: auto; text-align: center;"></table>
+    <div id = 'data'>
+      <hr>
+      <table id='tbl' class = "table table-hover" style="margin: auto; text-align: center;"></table>
 
-    <div style = "text-align: center;">Song Name</div>
-    <div style = "text-align: center;">
-      <input id = 'name' style = "align-items: center;"></input>
-    </div>
+      <div style = "text-align: center;">Song Name</div>
+      <div style = "text-align: center;">
+        <input id = 'name' style = "align-items: center;"></input>
+      </div>
 
-    <div style = "text-align: center;">
-      <form action="/action_page.php">
-        <label for="lod">Level of Difficulty:</label>
-        <select name="levels" id="LOD">
-          <option value="High">High</option>
-          <option value="Mid">Mid</option>
-          <option value="Low">Low</option>
-        </select>
-      </form>
-    </div>
+      <div style = "text-align: center;">
+        <form action="/action_page.php">
+          <label for="lod">Level of Difficulty:</label>
+          <select name="levels" id="LOD">
+            <option value="High">High</option>
+            <option value="Mid">Mid</option>
+            <option value="Low">Low</option>
+          </select>
+        </form>
+      </div>
 
-    <div class="d-grid gap-2 col-2 mx-auto">
-      <button class = "btn btn-primary" onclick="submit_data()">SUBMIT</button>
+      <div class="d-grid gap-2 col-2 mx-auto">
+        <button class = "btn btn-primary" onclick="submit_data()">SUBMIT</button>
+      </div>
     </div>
   </div>
   

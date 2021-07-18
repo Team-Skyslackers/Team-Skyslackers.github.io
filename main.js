@@ -151,6 +151,7 @@ let updateTimer;
 // Create new audio element
 let curr_track = document.createElement('audio');
 let pinned = [];
+let history = [];
 let output = [];
 let csvText = '';
 let markerPinHTML = "";
@@ -168,6 +169,7 @@ function resetValues() {
 function mark(){
   let curr_time = curr_track.currentTime;
   pinned.push(curr_time);
+  history.push(curr_time);
   pinned = pinned.sort((a, b) => a - b);
   // console.log(pinned);
   pin_num += 1;
@@ -259,7 +261,13 @@ function pauseTrack() {
   playpause_btn.innerHTML = '<i class="fas fa-play"></i>';;
 }
 function deletepin(e) {
+  console.log(history);
+  let time_sel;
+  time_sel = pinned[parseInt(e.target.id.slice(1))-1];
+  console.log(time_sel);
   pinned.splice(parseInt(e.target.id.slice(1))-1,1);
+  history.splice(history.indexOf(time_sel),1); 
+  console.log(history);
   // console.log(new_pinned)
   if (pinned.length > 0) 
   {
@@ -323,7 +331,7 @@ async function submit_data(){
   // console.log(map_url);
   // console.log(song_url);
   console.log(currentUser.uid);
-  DB.ref('songs/song').set({
+  DB.ref('songs/'+document.getElementById("name").value).set({
     details: {
       author: currentUser.uid,
       creationTime: getUTCDateAndTime()
@@ -339,7 +347,8 @@ async function submit_data(){
     title: document.getElementById("name").value
 
   })
-
+  alert("Song and map submitted");
+  location.reload();
 }
 
 function seekTo() {
@@ -372,4 +381,21 @@ function seekUpdate() {
   }
 }
 
+function undo() {
+  console.log(history);
+  if (history.length > 0) {
+    let prev_pin;
+    prev_pin = history.pop();
+    pinned.splice(pinned.indexOf(prev_pin),1); 
+    // console.log(new_pinned)
+    if (pinned.length > 0) 
+    {
+      pinned.forEach(draw);
+    }
+    else {
+      $("#tbl").html("");
+      $("#markbar").html("");
+    }
+  }
+}
 
