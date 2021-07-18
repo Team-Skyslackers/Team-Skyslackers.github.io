@@ -106,52 +106,70 @@
     </div>
   </div>
 
+
   <!-- music editor -->
   <div class="container d-none" id="music-editor">
     <hr>
-    <input class = "upload" id="audio_file" type="file" accept="audio/*"></input>
-    <div class="player">
-      <div style="display: flex; flex-direction: row; align-items: center;"> 
-        <div class = "undo" onclick = "undo()"><i class="fas fa-undo"></i></div>
-        <div class="playpause-track" onclick="playpauseTrack()"><i class="fas fa-play"></i></div>
-        <div class="marker" onclick="mark()"><i class="fas fa-map-pin"></i></div>
-      </div>
-      <div id='markbar' style='width: 90%; height: 24px;'>
-        <!-- <i id="1" class="fas fa-map-marker" style="position: absolute; left: 1361px; top:395px; transform: scale(0.7, 1); color: rgb(223, 16, 16);"><span class="hw">1.05</span></i> -->
-      </div>
-      <div class="slider_container">
-        <div id="current-time" style="padding: 10px;">00:00</div>
-        <input id="music-slider" type="range" min="0" max="100000" value="0" class="slider" onchange="seekTo()" onmousedown="stopUpdate()"
-        onmouseup = "startUpdate()">
-        <div id="total-duration" style="padding: 10px;">00:00</div>
-      </div>
+    <div class="tab">
+      <button class="tablinks active" onclick="openTab(event, 'uploadmap')">Upload Songs & Maps</button>
+      <button class="tablinks" onclick="openTab(event, 'edit'); Loadlist()">Edit Uploaded Items</button>
+    </div>
+    <hr>
+    <div id = 'uploadmap' class = 'tabcontent'>
+      <input class = "upload" id="audio_file" type="file" accept="audio/*"></input>
+      <div class="player">
+        <div style="display: flex; flex-direction: row; align-items: center;"> 
+          <div class = "undo" onclick = "undo()"><i class="fas fa-undo"></i></div>
+          <div class="playpause-track" onclick="playpauseTrack()"><i class="fas fa-play"></i></div>
+          <div class="marker" onclick="mark()"><i class="fas fa-map-pin"></i></div>
+        </div>
+        <div id='markbar' style='width: 90%; height: 24px;'>
+          <!-- <i id="1" class="fas fa-map-marker" style="position: absolute; left: 1361px; top:395px; transform: scale(0.7, 1); color: rgb(223, 16, 16);"><span class="hw">1.05</span></i> -->
+        </div>
+        <div class="slider_container">
+          <div id="current-time" style="padding: 10px;">00:00</div>
+          <input id="music-slider" type="range" min="0" max="100000" value="0" class="slider" onchange="seekTo()" onmousedown="stopUpdate()"
+          onmouseup = "startUpdate()">
+          <div id="total-duration" style="padding: 10px;">00:00</div>
+        </div>
 
+      </div>
+      <hr>
+      <!-- marked positions -->
+      <div id = 'data'>
+        <table id='tbl' class = "table table-hover" style="margin: auto; text-align: center;"></table>
+
+        <div style = "text-align: center;">Song Name</div>
+        <div style = "text-align: center;">
+          <input id = 'name' style = "align-items: center;"></input>
+        </div>
+
+        <div style = "text-align: center;">
+          <form action="/action_page.php">
+            <label for="lod">Level of Difficulty:</label>
+            <select name="levels" id="LOD">
+              <option value="high">high</option>
+              <option value="mid">mid</option>
+              <option value="low">low</option>
+            </select>
+          </form>
+        </div>
+
+        <div class="d-grid gap-2 col-2 mx-auto">
+          <button class = "btn btn-primary" onclick="submit_data()">SUBMIT</button>
+        </div>
+      </div>
     </div>
 
-    <!-- marked positions -->
-    <div id = 'data'>
-      <hr>
-      <table id='tbl' class = "table table-hover" style="margin: auto; text-align: center;"></table>
-
-      <div style = "text-align: center;">Song Name</div>
-      <div style = "text-align: center;">
-        <input id = 'name' style = "align-items: center;"></input>
-      </div>
-
-      <div style = "text-align: center;">
+    <div id = 'edit' class = 'tabcontent'>
+      <div style = "text-align: center;" >
         <form action="/action_page.php">
-          <label for="lod">Level of Difficulty:</label>
-          <select name="levels" id="LOD">
-            <option value="High">High</option>
-            <option value="Mid">Mid</option>
-            <option value="Low">Low</option>
+          <label for="lod">Map to edit:</label>
+          <select name="levels" id="songlist" onchange="if (this.value!=0) LoadSong();">
           </select>
         </form>
       </div>
-
-      <div class="d-grid gap-2 col-2 mx-auto">
-        <button class = "btn btn-primary" onclick="submit_data()">SUBMIT</button>
-      </div>
+      <div id = "mapeditor"></div>
     </div>
   </div>
   

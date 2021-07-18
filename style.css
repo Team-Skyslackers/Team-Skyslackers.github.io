@@ -112,3 +112,31 @@ i.fa-map-marker:hover .hw{
 i.fa-map-marker {
   cursor: pointer;
 }
+
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;;
+  text-align: center;
+  width:357px;
+  margin-left: 35%;
+}
+
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 3px 8px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}

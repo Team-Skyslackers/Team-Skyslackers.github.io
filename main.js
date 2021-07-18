@@ -156,6 +156,7 @@ let output = [];
 let csvText = '';
 let markerPinHTML = "";
 let markerTableHTML = "";
+let songlistHTML = "";
 let pin_num = 0;
 
 
@@ -289,66 +290,80 @@ function jump(e) {
 }
 
 async function submit_data(){
+  let repeat = 0;
+  console.log(document.getElementById("name").value);
+  await DB.ref('songs').orderByChild('title').equalTo(document.getElementById("name").value).get().then(snapshot => {
+    console.log(snapshot.exists());
+    if (snapshot.exists()){
+      repeat = 1;
+      alert("Map name already exists. Try a new one.");
+    }
+  });
 
-  for (let idx = 0; idx < pinned.length; idx++) {
-    output.push([pinned[idx],document.getElementById("i"+(idx+1).toString(10)).value]);
+  if (repeat != 1) {
+    for (let idx = 0; idx < pinned.length; idx++) {
+      output.push([pinned[idx],document.getElementById("i"+(idx+1).toString(10)).value]);
+    }
+
+
+    output.forEach((row, ind) => {
+      const properValues = [row[0], row[1]];
+      return (csvText += `${properValues.join(',')}\r\n`);
+    });
+
+    console.log(csvText);
+    window.URL = window.webkitURL || window.URL;
+    var contentType = 'text/csv';
+    var csvFile = new Blob([csvText], {type: contentType});
+    const ref1 = firebase.storage().ref().child('musicFile/'+document.getElementById("name").value+'_map.csv');
+    // [START storage_upload_blob]
+    // 'file' comes from the Blob or File API
+    await ref1.put(csvFile).then((snapshot) => {
+      console.log('Uploaded a blob or file!');
+    });
+    const ref2 = firebase.storage().ref().child('musicFile/'+document.getElementById("name").value+'_song.csv');
+    // [START storage_upload_blob]
+    // 'file' comes from the Blob or File API
+    await ref2.put(file).then((snapshot) => {
+      console.log('Uploaded a blob or file!');
+    });
+    let map_url;
+    let song_url
+    const p1 = ref1.getDownloadURL();
+    await p1.then((url)=> {
+      // console.log(url);
+      map_url = url;
+    });
+    const p2 = ref2.getDownloadURL();
+    await p2.then((url)=>{
+      // console.log(url);
+      song_url = url;
+    });
+    // console.log(map_url);
+    // console.log(song_url);
+    console.log(currentUser.uid);
+
+
+    
+    DB.ref('songs/'+document.getElementById("name").value).set({
+      details: {
+        author: currentUser.uid,
+        creationTime: getUTCDateAndTime()
+      },
+      
+      difficulty: document.getElementById("LOD").value,
+
+      storageLink: {
+        csv: map_url,
+        mp3: song_url
+      },
+
+      title: document.getElementById("name").value
+    })
+    alert("Song and map submitted");
+    location.reload();
   }
 
-
-  output.forEach((row, ind) => {
-    const properValues = [row[0], row[1]];
-    return (csvText += `${properValues.join(',')}\r\n`);
-  });
-
-  console.log(csvText);
-  window.URL = window.webkitURL || window.URL;
-  var contentType = 'text/csv';
-  var csvFile = new Blob([csvText], {type: contentType});
-  const ref1 = firebase.storage().ref().child('musicFile/map.csv');
-  // [START storage_upload_blob]
-  // 'file' comes from the Blob or File API
-  ref1.put(csvFile).then((snapshot) => {
-    console.log('Uploaded a blob or file!');
-  });
-  const ref2 = firebase.storage().ref().child('musicFile/song.csv');
-  // [START storage_upload_blob]
-  // 'file' comes from the Blob or File API
-  ref2.put(file).then((snapshot) => {
-    console.log('Uploaded a blob or file!');
-  });
-  let map_url;
-  let song_url
-  const p1 = ref1.getDownloadURL();
-  await p1.then((url)=> {
-    // console.log(url);
-    map_url = url;
-  });
-  const p2 = ref2.getDownloadURL();
-  await p2.then((url)=>{
-    // console.log(url);
-    song_url = url;
-  });
-  // console.log(map_url);
-  // console.log(song_url);
-  console.log(currentUser.uid);
-  DB.ref('songs/'+document.getElementById("name").value).set({
-    details: {
-      author: currentUser.uid,
-      creationTime: getUTCDateAndTime()
-    },
-    
-    difficulty: document.getElementById("LOD").value,
-
-    storageLink: {
-      csv: map_url,
-      mp3: song_url
-    },
-
-    title: document.getElementById("name").value
-
-  })
-  alert("Song and map submitted");
-  location.reload();
 }
 
 function seekTo() {
@@ -397,5 +412,71 @@ function undo() {
       $("#markbar").html("");
     }
   }
+}
+
+async function openTab(event,tabname) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(tabname).style.display = "block";
+  event.currentTarget.className += " active";
+}
+
+async function Loadlist(){
+  $('#songlist').html("<option value = 0>Choose a map below</option>");
+  await DB.ref('songs').orderByChild('details/author').equalTo(currentUser.uid).get().then(snapshot => {
+    snapshot.forEach(t=>{
+      songlistHTML = "<option value = \""+
+      t.val().title+
+      "\">" + t.val().title + "</option>";
+      $('#songlist').append(songlistHTML);
+    });
+  });
+}
+
+async function LoadSong(){
+  let map = document.createElement('input');
+  map.setAttribute('type','file');
+  map.addEventListener('change', e => {
+    var files = e.target.files;
+    var reader = new FileReader();
+    reader.readAsText(files[0]);
+    console.log(files[0]);
+  },false)
+  let songinfo;
+  console.log(document.getElementById('songlist').value);
+  await DB.ref('songs').orderByChild('title').equalTo(document.getElementById('songlist').value).get().then(snapshot => {
+    console.log(snapshot.val());
+    songinfo = snapshot;
+  });
+  curr_track.setAttribute("preload","metadata");
+  curr_track.src = songinfo.val().test1.storageLink.mp3;
+  curr_track.onloadedmetadata = function() {
+    duration = curr_track.duration;
+  };
+  curr_track.load();
+    // curr_track.play();
+  clearInterval(updateTimer);
+  resetValues();
+  updateTimer = setInterval(seekUpdate, 10);
+  $('#mapeditor').append($('.player')[0]);
+  var xhr = new XMLHttpRequest();
+  xhr.responseType = 'blob';
+  xhr.onload = (event) => {
+    var blob = xhr.response;
+    console.log(blob);
+  };
+  xhr.open('GET', songinfo.val().test1.storageLink.csv);
+  xhr.send();
+
+  // console.log(map.value);
+
+  
 }
 
