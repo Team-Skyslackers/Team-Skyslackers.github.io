@@ -158,7 +158,7 @@ let markerPinHTML = "";
 let markerTableHTML = "";
 let songlistHTML = "";
 let pin_num = 0;
-
+var result = {};
 
 
 function resetValues() {
@@ -182,7 +182,7 @@ function draw(item, index) {
   let leftpx = $("#music-slider").position().left;
   let rightpx = leftpx + $("#music-slider").width();
   let pin_pos = item/duration * (rightpx-leftpx) + leftpx;
-  
+  console.log(duration);
   let ct_pos = leftpx - 20;
 
   $("#current-time").css({
@@ -208,12 +208,16 @@ function draw(item, index) {
     transform: "scale(0.7,1)",
     color: "rgb(223,16,16)"
   })
+  console.log(result);
+  console.log(result[item]);
+  let value = (result[item]==undefined)? '':result[item];
   markerTableHTML = "<tr id = t"+ (index+1).toString(10) + "><td width=\"200px\">"+(index+1).toString(10)+
     "<a id = a"+ (index+1).toString(10) +"></a>" + "</td><td width=\"200px\">"+ (Math.round(item*100)/100).toString(10)+ 
-    "</td><td><input id=i" + (index+1).toString(10) +"></input></td>"+
+    "</td><td><input id=\"i" + (index+1).toString(10) + "\" value =" + value +"></input></td>"+
     "<td><i class=\"fas fa-trash-alt\" id=\"d"+(index+1).toString(10)+
     "\" onclick = \"deletepin(event)\"" + "></i></td>"+ "</tr>";
   $("#tbl").append(markerTableHTML);
+  
 }
 // Load the first track in the tracklist
 let duration;
@@ -299,8 +303,8 @@ async function submit_data(){
       alert("Map name already exists. Try a new one.");
     }
   });
-
-  if (repeat != 1) {
+  //if no repeat, can proceed
+  if (repeat != 1) { 
     for (let idx = 0; idx < pinned.length; idx++) {
       output.push([pinned[idx],document.getElementById("i"+(idx+1).toString(10)).value]);
     }
@@ -441,22 +445,16 @@ async function Loadlist(){
 }
 
 async function LoadSong(){
-  let map = document.createElement('input');
-  map.setAttribute('type','file');
-  map.addEventListener('change', e => {
-    var files = e.target.files;
-    var reader = new FileReader();
-    reader.readAsText(files[0]);
-    console.log(files[0]);
-  },false)
   let songinfo;
   console.log(document.getElementById('songlist').value);
   await DB.ref('songs').orderByChild('title').equalTo(document.getElementById('songlist').value).get().then(snapshot => {
-    console.log(snapshot.val());
-    songinfo = snapshot;
+    console.log(snapshot.toJSON());
+    songinfo = snapshot.toJSON();
+    
   });
   curr_track.setAttribute("preload","metadata");
-  curr_track.src = songinfo.val().test1.storageLink.mp3;
+  curr_track.src = songinfo[document.getElementById('songlist').value].storageLink.mp3;
+  // curr_track.src = songinfo.valueOf(songinfo.key).storageLink.mp3;
   curr_track.onloadedmetadata = function() {
     duration = curr_track.duration;
   };
@@ -465,18 +463,151 @@ async function LoadSong(){
   clearInterval(updateTimer);
   resetValues();
   updateTimer = setInterval(seekUpdate, 10);
-  $('#mapeditor').append($('.player')[0]);
   var xhr = new XMLHttpRequest();
   xhr.responseType = 'blob';
-  xhr.onload = (event) => {
-    var blob = xhr.response;
-    console.log(blob);
-  };
-  xhr.open('GET', songinfo.val().test1.storageLink.csv);
+  let blob;
+  xhr.open('GET', songinfo[document.getElementById('songlist').value].storageLink.csv);
+  xhr.onreadystatechange = handleStateChange;
   xhr.send();
+  function handleStateChange() {
+    if (xhr.readyState == 4 &&
+        xhr.status >= 200 &&
+        xhr.status < 300) {
+      blob = xhr.response;
+      console.log(blob);
+      xhr.abort();
+    }
+  }
+  setTimeout(function(){
+    blob.text().then(res=>{
+      console.log(res);
+      let rawdata = res.split(/\r\n|\n/).slice(0, -1);
+      console.log(rawdata);
+      pinned = rawdata.map(x=>parseFloat(x.split(',')[0]));
+      console.log(pinned);
+      output = rawdata.map(x=>x.split(',')[1]);
+      console.log(output);
+      pinned.forEach(draw);
+      output.forEach((item, index)=> {
+        document.getElementById("i"+(index+1).toString(10)).value = item;
+      })
+
+      result =  output.reduce(function(result, field, index) {
+        result[pinned[index]] = field;
+        return result;
+      }, {})
+      document.getElementById('name').value = document.getElementById('songlist').value;
+      document.getElementById('name').disabled = true;
+      document.getElementById('name').disabled = true;
+      document.getElementById('LOD').value = songinfo[document.getElementById('songlist').value].difficulty;
+    });
+  },1000);
+  // var xhr = new XMLHttpRequest();
+  // xhr.responseType = 'blob';
+  // let blob;
+  // xhr.open('GET', songinfo[document.getElementById('songlist').value].storageLink.csv);
+  // xhr.onload = (event) => {
+  //   blob = xhr.response;
+  // };
+  // xhr.send();
+  // setTimeout(function() {
+  //   xhr.abort();
+  //   console.log(blob);
+  // }, 300)
+ 
+  // blob.text().then(res=>{
+  //   console.log(res);
+  //   let rawdata = res.split(/\r\n|\n/).slice(0, -1);
+  //   console.log(rawdata);
+  //   pinned = rawdata.map(x=>parseFloat(x.split(',')[0]));
+  //   console.log(pinned);
+  //   output = rawdata.map(x=>x.split(',')[1]);
+  //   console.log(output);
+  //   pinned.forEach(draw);
+  //   output.forEach((item, index)=> {
+  //     document.getElementById("i"+(index+1).toString(10)).value = item;
+  //   })
+  // });
+
+  $('#mapeditor').append($('.player')[0]);
+  $('#mapeditor').append($('#data'));
+  $('#buttons').html('');
+  $('#buttons').append('<button id = \'updatebtn\' class = \"btn btn-primary\" onclick=\"update_curr()\">UPDATE</button>')
+  $('#buttons').append('<button id = \'deletebtn\' class = \"btn btn-primary\" onclick=\"delete_curr()\">DELETE</button>')
+  $("#deletebtn").css({
+    backgroundColor: "rgb(223,16,16)",
+    border: "1px solid rgb(223,16,16)"
+  })
+  
 
   // console.log(map.value);
+}
+async function delete_curr() {
 
+  DB.ref('songs/'+document.getElementById("name").value).remove(e => {
+    console.log(e);
+  });
+  const ref1 = firebase.storage().ref().child('musicFile/'+document.getElementById("name").value+'_map.csv');
+  await ref1.delete().then((snapshot) => {
+    console.log('deleted!');
+  });
+  const ref2 = firebase.storage().ref().child('musicFile/'+document.getElementById("name").value+'_song.csv');
+  // [START storage_upload_blob]
+  // 'file' comes from the Blob or File API
+  await ref2.delete().then((snapshot) => {
+    console.log('deleted!');
+  });
+  alert("Song and map deleted!")
+  location.reload();
+}
+
+async function update_curr() {
+  let song_url;
+  await DB.ref('songs').orderByChild('title').equalTo(document.getElementById("name").value).get().then(snapshot => {
+    song_url = snapshot.toJSON()[document.getElementById('songlist').value].storageLink.mp3;
+    console.log(song_url);
+  });
+  output = [];
+  for (let idx = 0; idx < pinned.length; idx++) {
+    output.push([pinned[idx],document.getElementById("i"+(idx+1).toString(10)).value]);
+  }
+
+
+  output.forEach((row, ind) => {
+    const properValues = [row[0], row[1]];
+    return (csvText += `${properValues.join(',')}\r\n`);
+  });
+
+  console.log(csvText);
+  window.URL = window.webkitURL || window.URL;
+  var contentType = 'text/csv';
+  var csvFile = new Blob([csvText], {type: contentType});
+  const ref1 = firebase.storage().ref().child('musicFile/'+document.getElementById("name").value+'_map.csv');
+  // [START storage_upload_blob]
+  // 'file' comes from the Blob or File API
+  await ref1.put(csvFile).then((snapshot) => {
+    console.log('Uploaded a blob or file!');
+  });
+  let map_url;
+  const p1 = ref1.getDownloadURL();
+  await p1.then((url)=> {
+    // console.log(url);
+    map_url = url;
+  });
+  // console.log(map_url);
+  // console.log(song_url);
+  console.log(currentUser.uid);
   
+  DB.ref('songs/'+document.getElementById("name").value).update({
+    difficulty: document.getElementById("LOD").value,
+
+    storageLink: {
+      csv: map_url,
+      mp3: song_url
+    }
+  })
+  alert("Map updated");
+  location.reload();
+
 }
 
