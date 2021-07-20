@@ -360,9 +360,7 @@ async function submit_data(){
       storageLink: {
         csv: map_url,
         mp3: song_url
-      },
-
-      title: document.getElementById("name").value
+      }
     })
     alert("Song and map submitted");
     location.reload();
@@ -437,8 +435,8 @@ async function Loadlist(){
   await DB.ref('songs').orderByChild('details/author').equalTo(currentUser.uid).get().then(snapshot => {
     snapshot.forEach(t=>{
       songlistHTML = "<option value = \""+
-      t.val().title+
-      "\">" + t.val().title + "</option>";
+      t.key+
+      "\">" + t.key + "</option>";
       $('#songlist').append(songlistHTML);
     });
   });
@@ -447,7 +445,7 @@ async function Loadlist(){
 async function LoadSong(){
   let songinfo;
   console.log(document.getElementById('songlist').value);
-  await DB.ref('songs').orderByChild('title').equalTo(document.getElementById('songlist').value).get().then(snapshot => {
+  await DB.ref('songs').orderByKey().equalTo(document.getElementById('songlist').value).get().then(snapshot => {
     console.log(snapshot.toJSON());
     songinfo = snapshot.toJSON();
     
@@ -563,7 +561,7 @@ async function delete_curr() {
 
 async function update_curr() {
   let song_url;
-  await DB.ref('songs').orderByChild('title').equalTo(document.getElementById("name").value).get().then(snapshot => {
+  await DB.ref('songs').orderByKey().equalTo(document.getElementById("name").value).get().then(snapshot => {
     song_url = snapshot.toJSON()[document.getElementById('songlist').value].storageLink.mp3;
     console.log(song_url);
   });
