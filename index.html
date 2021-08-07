@@ -34,76 +34,90 @@
 
   <!-- authentication -->
   <!-- login form -->
-  <div class="container" id="signin-form">
-    <h2>please login to start editting</h2>
-      <div class="card card-body"><form>
-          <div class="mb-3">
-            <label for="inputEmail" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp">
-          </div>
-          <div class="mb-3">
-            <label for="inputPassword" class="form-label">Password</label>
-            <input type="password" class="form-control" id="inputPassword">
-          </div>
-          <div class="d-grid gap-2">
-              <button type="button" id="signin-button" class="btn btn-primary" onclick="SigninUser($('#inputEmail').val(), $('#inputPassword').val())">
-                  Sign in
-              </button>
-              <button type="button" id="google-signin-button" class="btn btn-info" onclick="GoogleSignin()">
-                  Sign in with Google
-              </button>
-              <button type="button" id="show-register-button" class="btn btn-warning"
-                  onclick=" $('#signin-form').addClass('d-none'); $('#registration-form').removeClass('d-none'); ">
-                  Create new account
-              </button>
-            </div>
-        </form>
+  <div class="container auth d-none" id="signin-form" style="max-width: 450px; margin: auto;">
+    <div class="card card-body">
+      <div class="mb-3">
+        <label for="inputEmail" class="form-label">Email address</label>
+        <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp">
       </div>
+      <div class="mb-3">
+        <label for="inputPassword" class="form-label">Password</label>
+        <input type="password" class="form-control" id="inputPassword" onkeydown="if(event.keyCode === 13) SigninUser($('#inputEmail').val(), $('#inputPassword').val())">
+      </div>
+      <div class="d-grid gap-2">
+        <button type="button" id="signin-button" class="btn btn-primary" onclick="SigninUser($('#inputEmail').val(), $('#inputPassword').val())">
+            Sign in
+        </button>
+        <button type="button" id="google-signin-button" class="btn btn-info" onclick="GoogleSignin()">
+            Sign in with Google
+        </button>
+        <button type="button" id="forgot-password-button" class="btn btn-secondary" onclick="ResetPasswordViaEmail()">
+            Forgot password?
+        </button>
+        <button type="button" id="show-register-button" class="btn btn-warning"
+            onclick=" $('#signin-form').addClass('d-none'); $('#registration-form').removeClass('d-none'); ">
+            Create new account
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- register form -->
-  <div class="container d-none" id="registration-form">
-      <div class="card card-body"><form>
-          <div class="mb-3">
-            <label for="inputRegEmail" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="inputRegEmail" aria-describedby="emailHelp">
-          </div>
-          <div class="mb-3">
-            <label for="inputRegPassword" class="form-label">Password</label>
-            <input type="password" class="form-control" id="inputRegPassword">
-          </div>
-          <div class="mb-3">
-            <label for="confirmRegPassword" class="form-label">Confirm Password</label>
-            <input type="password" class="form-control" id="confirmRegPassword">
-          </div>
-          <!-- <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="exampleCheck1">
-            <label class="form-check-label" for="exampleCheck1">Check me out</label>
-          </div> -->
-          <div class="d-grid gap-2">
-              <button type="button" id="register-button" class="btn btn-warning" 
-                  onclick="RegisterUser($('#inputRegEmail').val(), $('#inputRegPassword').val(), $('#confirmRegPassword').val())">
-                  Create new account
-              </button>
-              <button type="button" id="hide-register-button" class="btn btn-primary" 
-                  onclick=" $('#signin-form').removeClass('d-none'); $('#registration-form').addClass('d-none'); ">
-                  Already have an account?
-              </button>
-            </div>
-        </form>
+  <div class="container auth d-none" id="registration-form" style="max-width: 450px; margin: auto;">
+    <div class="card card-body">
+      <div class="mb-3">
+        <label for="inputRegUsername" class="form-label">Username</label>
+        <input type="text" class="form-control" id="inputRegUsername" maxlength="20" pattern="[A-Za-z0-9]">
       </div>
+      <div class="mb-3">
+      <label for="inputRegEmail" class="form-label">Email address</label>
+      <input type="email" class="form-control" id="inputRegEmail" aria-describedby="emailHelp">
+      </div>
+      <div class="mb-3">
+      <label for="inputRegPassword" class="form-label">Password</label>
+      <input type="password" class="form-control" id="inputRegPassword">
+      </div>
+      <div class="mb-3">
+      <label for="confirmRegPassword" class="form-label" onkeydown="if(event.keyCode === 13) RegisterUser($('#inputRegUsername').val(), $('#inputRegEmail').val(), $('#inputRegPassword').val(), $('#confirmRegPassword').val())">
+        Confirm Password
+      </label>
+      <input type="password" class="form-control" id="confirmRegPassword">
+      </div>
+      <div class="d-grid gap-2">
+        <button type="button" id="register-button" class="btn btn-warning" 
+          onclick="RegisterUser($('#inputRegUsername').val(), $('#inputRegEmail').val(), $('#inputRegPassword').val(), $('#confirmRegPassword').val())">
+          Create new account
+        </button>
+        <button type="button" id="hide-register-button" class="btn btn-primary" 
+          onclick=" $('#signin-form').removeClass('d-none'); $('#registration-form').addClass('d-none'); ">
+          Already have an account?
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- logout button -->
   <div class="container d-none" id="signout-form">
-    <div class="d-grid gap-2">
+    <div class="row">
+      <div class="col-10">
+        <H2 id="welcome-text">
+            Hi, anonymous user.
+        </H2>
+      </div>
+      <div class="col-2">
+        <button id="signout-button" type="button" class="btn btn-primary" onclick="SignOut()">
+            Sign out
+        </button>
+      </div>
+    </div>
+    <!-- <div class="d-grid gap-2">
       <H2 id="welcome-text">
           Hi, anonymous user.
       </H2>
       <button id="signout-button" type="button" class="btn btn-primary" onclick="SignOut()">
           Sign out
       </button>
-    </div>
+    </div> -->
   </div>
 
 

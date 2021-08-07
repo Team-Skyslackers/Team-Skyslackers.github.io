@@ -21,6 +21,11 @@ function getUTCDateAndTime(){
   d.getUTCHours().toString().padStart(2, '0') + ':' + d.getUTCMinutes().toString().padStart(2, '0') + ':' + d.getUTCSeconds().toString().padStart(2, '0');
 }
 
+// Press tab to go to next input
+$(".inputs").keyup(e => {
+  if (e.keyCode === 9) $(this).next('.inputs').focus();
+});
+
 // Register function
 function RegisterUser(email, password, confirmPassword){
   if (password != confirmPassword){
@@ -100,6 +105,22 @@ function SignOut(){
   .catch((error) => {
       console.log(error.message);
   });
+}
+
+// Send reset password email
+function ResetPasswordViaEmail(){
+  firebase.auth().sendPasswordResetEmail($("#inputEmail").val())
+      .then(() => {
+          alert("Password reset email sent!\nPlease check your inbox.");
+          // Password reset email sent!
+          // ..
+      })
+      .catch((error) => {
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          alert(errorMessage);
+          // ..
+      });
 }
 
 // Change in authentication state
