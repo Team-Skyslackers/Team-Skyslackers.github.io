@@ -131,7 +131,7 @@
     <hr>
     <div id = 'uploadmap' class = 'tabcontent' style="display: block;">
       <input class = "upload mb-3" id="audio_file" type="file" accept="audio/*"></input>
-      <div class="player card mb-3">
+      <div class="player card mb-3" style="background-color: #FBFCFC;">
         <div style="display: flex; flex-direction: row; align-items: center; gap: 36px"> 
           <div class = "undo" onclick = "undo()"><i class="fas fa-undo"></i></div>
           <div class="playpause-track" onclick="playpauseTrack()"><i class="fas fa-play"></i></div>
@@ -148,7 +148,7 @@
         </div>
 
       </div>
-      <div id="tbl_card" class="card" style="height: 50vh; overflow: auto;">
+      <div id="tbl_card" class="card mb-3" style="height: 50vh; overflow: auto; background-color: #FBFCFC;">
         <table id="tbl" class = "table table-bordered" style="text-align: center;">
           <tbody>
             <tr>
@@ -160,9 +160,8 @@
           </tbody>
         </table>
       </div>
-      <hr>
       <!-- marked positions -->
-      <div id = 'data' class="card mb-3" style="text-align: center;">
+      <div id = 'data' class="card mb-3" style="text-align: center; background-color: #FBFCFC;">
 
         <div style = "padding: 6px;">Song Name</div>
         <div style = "padding: 6px;">
@@ -182,7 +181,7 @@
         </div>
 
         <div id='buttons' class="d-grid gap-2 col-2 mx-auto">
-          <button class = "btn btn-primary" onclick="submit_data()">SUBMIT</button>
+          <button class = "btn btn-primary mb-3" onclick="submit_data()">SUBMIT</button>
         </div>
       </div>
     </div>
