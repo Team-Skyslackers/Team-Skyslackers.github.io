@@ -178,7 +178,7 @@ let csvText = '';
 let markerPinHTML = "";
 let markerTableHTML = "";
 let songlistHTML = "";
-let pin_num = 0;
+let max_pin_num = 0;
 var result = {};
 
 
@@ -194,9 +194,20 @@ function mark(){
   history.push(curr_time);
   pinned = pinned.sort((a, b) => a - b);
   // console.log(pinned);
-  pin_num += 1;
+  max_pin_num += 1;
   pinned.forEach(draw);
+
+  // get current pin number
+  var cur_pin = pinned.indexOf(curr_time) + 1;
   
+  // Jump to the new entry
+  document.getElementById("t"+cur_pin).style.backgroundColor = "rgb(100,200,200)";
+  $("#tbl_card").scrollTop($("#t"+cur_pin).position().top);
+
+  setTimeout(function() { 
+    console.log("bye");
+    document.getElementById("t"+cur_pin).style.backgroundColor = "";
+  }, 1000);
 }
 
 function draw(item, index) {
@@ -219,7 +230,13 @@ function draw(item, index) {
     "<span class=\"hw\">"+ (Math.round(item*100)/100).toString(10) +"</span></i>"+"</a>" ;
   if (index == 0) {
     $("#markbar").html("");
-    $("#tbl").html("<tr><th>No.</th><th>Time</th><th>Pos</th><th>Delete</th></tr>");
+    $("#tbl").html("\
+    <tr>\
+      <th style='width: 30%'>No.</th>\
+      <th style='width: 30%'>Time</th>\
+      <th style='width: 30%'>Pos</th>\
+      <th style='width: 10%'>Delete</th>\
+    </tr>");
   }
   $("#markbar").append(markerPinHTML);
   $('#'+(index + 1)).css({
@@ -234,7 +251,7 @@ function draw(item, index) {
   let value = (result[item]==undefined)? '':result[item];
   markerTableHTML = "<tr id = t"+ (index+1).toString(10) + "><td width=\"200px\">"+(index+1).toString(10)+
     "<a id = a"+ (index+1).toString(10) +"></a>" + "</td><td width=\"200px\">"+ (Math.round(item*100)/100).toString(10)+ 
-    "</td><td><input id=\"i" + (index+1).toString(10) + "\" value =" + value +"></input></td>"+
+    "</td><td><input type=\"text\" id=\"i" + (index+1).toString(10) + "\" value =" + value +"></input></td>"+
     "<td><i class=\"fas fa-trash-alt\" id=\"d"+(index+1).toString(10)+
     "\" onclick = \"deletepin(event)\"" + "></i></td>"+ "</tr>";
   $("#tbl").append(markerTableHTML);
