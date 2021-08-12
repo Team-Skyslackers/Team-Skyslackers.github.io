@@ -28,22 +28,31 @@ body {
   justify-content: center;
 }
 
-.playpause-track {
+.playpause-track .undo .marker {
   padding: 25px;
   opacity: 0.8;
 
   /* Smoothly transition the opacity */
   transition: opacity .2s;
 }
-.undo .marker {
-  opacity: 0.8;
+/* .undo .marker {
+  padding: 25px;
+  opacity: 0.5;
+} */
 
-  /* Smoothly transition the opacity */
-  transition: opacity .2s;
+.undo:hover {
+  color: paleturquoise;
+  cursor: pointer;
 }
 
-.playpause-track:hover, .prev-track:hover, .next-track:hover {
-  opacity: 1.0;
+.playpause-track:hover{
+  color: paleturquoise;
+  cursor: pointer;
+}
+
+.marker:hover{
+  color: paleturquoise;
+  cursor: pointer;
 }
 
 .slider_container {
@@ -72,24 +81,21 @@ body {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  width: 3px;
+  width: 8px;
   height: 15px;
   background: rgb(0, 0, 0);
   cursor: pointer;
+  /* background-color: paleturquoise; */
 }
 
-.slider:hover:hover {
-  opacity: 1.0;
+.slider::-webkit-slider-thumb:hover {
+  background-color: paleturquoise;
 }
 
 .slider {
   width: 90%;
 }
 
-
-i.fa-play-circle, i.fa-pause-circle, i.fa-step-forward, i.fa-step-backward {
-  cursor: pointer;
-}
 
 .hw {
   position:absolute;
