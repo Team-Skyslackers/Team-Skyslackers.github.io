@@ -28,7 +28,7 @@
 
 <body>
   <div class="container">
-    <h1><strong>Skyslackers</strong> online music editor</h1>
+    <h1><strong>Skyslackers</strong> online map editor</h1>
   </div>
   <hr>
 
@@ -130,9 +130,9 @@
     </div>
     <hr>
     <div id = 'uploadmap' class = 'tabcontent' style="display: block;">
-      <input class = "upload" style = "font-size: 12px;" id="audio_file" type="file" accept="audio/*"></input>
-      <div class="player">
-        <div style="display: flex; flex-direction: row; align-items: center; gap: 12px"> 
+      <input class = "upload mb-3" id="audio_file" type="file" accept="audio/*"></input>
+      <div class="player card mb-3" style="background-color: #FBFCFC;">
+        <div style="display: flex; flex-direction: row; align-items: center; gap: 36px"> 
           <div id = "undobtn" class = "undo" onclick = "" style = "cursor: not-allowed;"><i class="fas fa-undo"></i></div>
           <div id = "playbtn" class="playpause-track" onclick=""style = "cursor: not-allowed;"><i class="fas fa-play"></i></div>
           <div id = "markbtn" class="marker" onclick=""style = "cursor: not-allowed;"><i class="fas fa-map-pin"></i></div>
@@ -148,18 +148,28 @@
         </div>
 
       </div>
-      <hr>
+      <div id="tbl_card" class="card mb-3" style="height: 50vh; overflow: auto; background-color: #FBFCFC;">
+        <table id="tbl" class = "table table-bordered" style="text-align: center;">
+          <tbody>
+            <tr>
+              <th style="width: 30%;">No.</th>
+              <th style="width: 30%;">Time</th>
+              <th style="width: 30%;">Pos</th>
+              <th style="width: 10%;">Delete</th>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <!-- marked positions -->
-      <div id = 'data'>
-        <table id='tbl' class = "table table-hover" style="margin: auto; text-align: center;"></table>
+      <div id = 'data' class="card mb-3" style="text-align: center; background-color: #FBFCFC;">
 
-        <div style = "text-align: center;">Song Name</div>
-        <!-- <div style = "text-align: center; font-size: 12px;">(Please name your map according to this format: songname + (author name +'s version). Example: Cyberpunk(David's version))</div> -->
-        <div style = "text-align: center;">
+        <div style = "padding: 6px;">Song Name</div>
+        <div style = "text-align: center; font-size: 12px;">(Please name your map according to this format: songname + (author name +'s version). Example: Cyberpunk(David's version))</div>
+        <div style = "padding: 6px;">
           <input id = 'name' style = "align-items: center;"></input>
         </div>
 
-        <div style = "text-align: center;">
+        <div style = "padding: 6px; padding-bottom: 12px;">
           <form action="/action_page.php">
             <label for="lod">Level of Difficulty:</label>
             <select name="levels" id="LOD">
@@ -172,7 +182,7 @@
         </div>
 
         <div id='buttons' class="d-grid gap-2 col-2 mx-auto">
-          <button class = "btn btn-primary" onclick="submit_data()">SUBMIT</button>
+          <button class = "btn btn-primary mb-3" onclick="submit_data()">SUBMIT</button>
         </div>
       </div>
     </div>

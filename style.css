@@ -5,11 +5,6 @@ body {
   transition: background-color .5s;
 }
 
-#data {
-  overflow: auto;
-  height: 250px;
-}
-
 #current-time{
   position: 'absolute';
   width: 60px;
@@ -146,3 +141,5 @@ i.fa-map-marker {
 .tab button.active {
   background-color: #ccc;
 }
+
+/* format input box in table */
