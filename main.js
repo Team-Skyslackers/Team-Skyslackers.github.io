@@ -297,6 +297,8 @@ audio_file.onchange = function() {
   document.getElementById("undobtn").style.cursor = "pointer";
   document.getElementById("markbtn").onclick = mark;
   document.getElementById("markbtn").style.cursor = "pointer";
+  document.getElementById("submitbtn").onclick = submit_data;
+  document.getElementById("submitbtn").style.cursor = "pointer";
 
   $("#playbtn").focus();
 }
@@ -352,78 +354,85 @@ function jump(e) {
 }
 
 async function submit_data(){
-  let repeat = 0;
-  console.log(document.getElementById("name").value);
-  await DB.ref('songs').orderByChild('title').equalTo(document.getElementById("name").value).get().then(snapshot => {
-    console.log(snapshot.exists());
-    if (snapshot.exists()){
-      repeat = 1;
-      alert("Map name already exists. Try a new one.");
-    }
-  });
-  //if no repeat, can proceed
-  if (repeat != 1) { 
-    for (let idx = 0; idx < pinned.length; idx++) {
-      output.push([pinned[idx],document.getElementById("i"+(idx+1).toString(10)).value]);
-    }
-
-
-    output.forEach((row, ind) => {
-      const properValues = [row[0], row[1]];
-      return (csvText += `${properValues.join(',')}\r\n`);
-    });
-
-    console.log(csvText);
-    window.URL = window.webkitURL || window.URL;
-    var contentType = 'text/csv';
-    var csvFile = new Blob([csvText], {type: contentType});
-    const ref1 = firebase.storage().ref().child('musicFile/'+document.getElementById("name").value+'_map.csv');
-    // [START storage_upload_blob]
-    // 'file' comes from the Blob or File API
-    await ref1.put(csvFile).then((snapshot) => {
-      console.log('Uploaded a blob or file!');
-    });
-    const ref2 = firebase.storage().ref().child('musicFile/'+document.getElementById("name").value+'_song.mp3');
-    // [START storage_upload_blob]
-    // 'file' comes from the Blob or File API
-    await ref2.put(file).then((snapshot) => {
-      console.log('Uploaded a blob or file!');
-    });
-    let map_url;
-    let song_url
-    const p1 = ref1.getDownloadURL();
-    await p1.then((url)=> {
-      // console.log(url);
-      map_url = url;
-    });
-    const p2 = ref2.getDownloadURL();
-    await p2.then((url)=>{
-      // console.log(url);
-      song_url = url;
-    });
-    // console.log(map_url);
-    // console.log(song_url);
-    console.log(currentUser.uid);
-
-
-    
-    DB.ref('songs/'+document.getElementById("name").value).set({
-      details: {
-        author: currentUser.uid,
-        creationTime: getUTCDateAndTime()
-      },
-      
-      difficulty: document.getElementById("LOD").value,
-
-      storageLink: {
-        csv: map_url,
-        mp3: song_url
-      }
-    })
-    alert("Song and map submitted");
-    location.reload();
+  // console.log(document.getElementById("LOD").value);
+  if (document.getElementById("name").value == '' || document.getElementById("LOD").value == '' ) {
+    alert("Please fill in all details and submit again.")
   }
+  else {
+    let repeat = 0;
+    console.log(document.getElementById("name").value);
+    await DB.ref('songs').orderByChild('title').equalTo(document.getElementById("name").value).get().then(snapshot => {
+      console.log(snapshot.exists());
+      if (snapshot.exists()){
+        repeat = 1;
+        alert("Map name already exists. Try a new one.");
+      }
+    });
+    //if no repeat, can proceed
+    if (repeat != 1) { 
+      for (let idx = 0; idx < pinned.length; idx++) {
+        output.push([pinned[idx],document.getElementById("i"+(idx+1).toString(10)).value]);
+      }
 
+
+      output.forEach((row, ind) => {
+        const properValues = [row[0], row[1]];
+        return (csvText += `${properValues.join(',')}\r\n`);
+      });
+
+      console.log(csvText);
+      window.URL = window.webkitURL || window.URL;
+      var contentType = 'text/csv';
+      var csvFile = new Blob([csvText], {type: contentType});
+      const ref1 = firebase.storage().ref().child('musicFile/'+document.getElementById("name").value+'_map.csv');
+      // [START storage_upload_blob]
+      // 'file' comes from the Blob or File API
+      await ref1.put(csvFile).then((snapshot) => {
+        console.log('Uploaded a blob or file!');
+      });
+      const ref2 = firebase.storage().ref().child('musicFile/'+document.getElementById("name").value+'_song.mp3');
+      // [START storage_upload_blob]
+      // 'file' comes from the Blob or File API
+      await ref2.put(file).then((snapshot) => {
+        console.log('Uploaded a blob or file!');
+      });
+      let map_url;
+      let song_url
+      const p1 = ref1.getDownloadURL();
+      await p1.then((url)=> {
+        // console.log(url);
+        map_url = url;
+      });
+      const p2 = ref2.getDownloadURL();
+      await p2.then((url)=>{
+        // console.log(url);
+        song_url = url;
+      });
+      // console.log(map_url);
+      // console.log(song_url);
+      console.log(currentUser.uid);
+
+
+      
+      DB.ref('songs/'+document.getElementById("name").value).set({
+        details: {
+          author: currentUser.uid,
+          creationTime: getUTCDateAndTime()
+        },
+        
+        difficulty: document.getElementById("LOD").value,
+
+        storageLink: {
+          csv: map_url,
+          mp3: song_url
+        }
+      })
+      alert("Song and map submitted");
+      location.reload();
+    }
+
+  }
+ 
 }
 
 function seekTo() {
