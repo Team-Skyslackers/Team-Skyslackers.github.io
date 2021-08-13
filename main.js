@@ -220,7 +220,7 @@ function draw(item, index) {
   // })
 
   markerPinHTML = "<a  id = " + (index+1).toString(10) + " href = \"#a"+ 
-    (index+1).toString(10) +"\" onclick=\"jump(event)\">"+ "<i class=\"fas fa-map-marker\">"+
+    (index+1).toString(10) +"\" onclick=\"highlight(event)\">"+ "<i class=\"fas fa-map-marker\">"+
     "<span class=\"hw\">"+ (Math.round(item*100)/100).toString(10) +"</span></i>"+"</a>" ;
   if (index == 0) {
     $("#markbar").html("");
@@ -243,25 +243,32 @@ function draw(item, index) {
   let value = (result[item]==undefined)? '':result[item];
   markerTableHTML = "<tr id = t"+ (index+1).toString(10) + "><td width=\"200px\">"+(index+1).toString(10)+
     "<a id = a"+ (index+1).toString(10) +"></a>" + "</td><td width=\"200px\">"+ (Math.round(item*100)/100).toString(10)+ 
-    "</td><td><input type=\"text\" id=\"i" + (index+1).toString(10) + "\" value =\"" + value +"\" maxlength=1 pattern=\"[A-Za-z]\"></input></td>"+
+    "</td><td><input type=\"text\" id=\"i" + (index+1).toString(10) + "\" value =\"" + value +"\" maxlength=1  onkeypress='return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122))'></input></td>"+
     "<td><i class=\"fas fa-trash-alt\" id=\"d"+(index+1).toString(10)+
     "\" onclick = \"deletepin(event)\"" + "></i></td>"+ "</tr>";
   $("#tbl").append(markerTableHTML);
   $("#i" + (index+1).toString(10)).keyup(function(){
+    console.log($(this).val().length)
+    console.log($(this).attr("maxlength"))
     if ($(this).val().length == $(this).attr("maxlength")){
       $("#i" + (index+2)).select()
     }
   })
+  $("#i" + (index+1).toString(10)).click(function(){
+    $(this).select();
+  })
 
+  // item is the time of the entry
 }
 
 $(window).keydown(e => {
   if (file == null){
     return
   }
+
   // space to pause
   if (e.keyCode == 32){
-    $("#playbtn").focus();
+    playpauseTrack()
   }
 
   // 'm' to mark
@@ -300,7 +307,7 @@ audio_file.onchange = function() {
   document.getElementById("submitbtn").onclick = submit_data;
   document.getElementById("submitbtn").style.cursor = "pointer";
 
-  $("#playbtn").focus();
+  $("#audio_file").blur();
 }
 
 function stopUpdate() {
@@ -346,12 +353,60 @@ function deletepin(e) {
   
 }
 
-function jump(e) {
-  document.getElementById("t"+e.target.offsetParent.id).style.backgroundColor = "rgb(100,200,200)";
+function highlight(e) {
+  highlightByID(e.target.offsetParent.id);
+}
+
+function highlightByID(id) {
+  $("tr").css("background-color", '')
+  $("#i" + id).select()
+  document.getElementById("t"+id).style.backgroundColor = "rgb(100,200,200)";
   setTimeout(function() { 
-    document.getElementById("t"+e.target.offsetParent.id).style.backgroundColor = "";
+    document.getElementById("t"+id).style.backgroundColor = "";
   }, 1000);
 }
+
+// automatically highlight
+var next_update_time = 0;
+var next_index = 1;
+
+curr_track.addEventListener("playing", function(){
+  if (curr_track.currentTime < pinned[0]){
+    next_index = 0;
+    next_update_time = pinned[0]
+    console.log(next_update_time)
+    console.log(next_index)
+    return
+  }
+
+  for(let i = 1; i < pinned.length; i++){
+    if (pinned[i-1] <= curr_track.currentTime && curr_track.currentTime <= pinned[i]){
+      next_index = i;
+      next_update_time = pinned[i]
+      console.log(next_update_time)
+      console.log(next_index)
+      return;
+    }
+  }
+
+  next_index = pinned.length-1;
+  next_update_time = curr_track.duration + 1;
+})
+
+window.setInterval( function(){
+  if (curr_track.paused || pinned.length == 0) return
+  if (curr_track.currentTime > next_update_time) {
+    console.log(curr_track.currentTime)
+    console.log(next_index)
+    highlightByID(next_index + 1)
+    next_index++
+    next_update_time = pinned[next_index];
+    if(next_index >= pinned.length) {
+      next_index = pinned.length-1;
+      next_update_time = curr_track.duration + 1;
+    }
+  }
+},5)
 
 async function submit_data(){
   // console.log(document.getElementById("LOD").value);
@@ -434,6 +489,25 @@ async function submit_data(){
   }
  
 }
+
+// keyboard left right to seek
+$(window).keydown(e => {
+  if (file == null){
+    return
+  }
+
+  // left
+  if (e.keyCode == 37){
+    slider.val(slider.val()-500)
+    seekTo()
+  }
+
+  // right
+  if (e.keyCode == 39) {
+    slider.val(slider.val()+500)
+    seekTo()
+  }
+})
 
 function seekTo() {
   let seekto = duration * (slider.val() / 100001);
@@ -615,7 +689,6 @@ async function LoadSong(){
   // console.log(map.value);
 }
 async function delete_curr() {
-
   DB.ref('songs/'+document.getElementById("name").value).remove(e => {
     console.log(e);
   });
