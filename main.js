@@ -318,6 +318,7 @@ function startUpdate() {
 }
 
 function playpauseTrack() {
+  $('#playbtn').blur()
   if (!isPlaying) playTrack();
   else pauseTrack();
 }
@@ -498,13 +499,13 @@ $(window).keydown(e => {
 
   // left
   if (e.keyCode == 37){
-    slider.val(slider.val()-500)
+    slider.val(parseInt(slider.val())-500)
     seekTo()
   }
 
   // right
   if (e.keyCode == 39) {
-    slider.val(slider.val()+500)
+    slider.val(parseInt(slider.val())+500)
     seekTo()
   }
 })
