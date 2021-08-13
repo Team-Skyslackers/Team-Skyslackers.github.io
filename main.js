@@ -261,6 +261,12 @@ audio_file.onchange = function() {
   clearInterval(updateTimer);
   resetValues();
   updateTimer = setInterval(seekUpdate, 10);
+  document.getElementById("playbtn").onclick = playpauseTrack;
+  document.getElementById("playbtn").style.cursor = "pointer";
+  document.getElementById("undobtn").onclick = undo;
+  document.getElementById("undobtn").style.cursor = "pointer";
+  document.getElementById("markbtn").onclick = mark;
+  document.getElementById("markbtn").style.cursor = "pointer";
 }
 
 function stopUpdate() {
@@ -557,7 +563,12 @@ async function LoadSong(){
     backgroundColor: "rgb(223,16,16)",
     border: "1px solid rgb(223,16,16)"
   })
-  
+  document.getElementById("playbtn").onclick = playpauseTrack;
+  document.getElementById("playbtn").style.cursor = "pointer";
+  document.getElementById("undobtn").onclick = undo;
+  document.getElementById("undobtn").style.cursor = "pointer";
+  document.getElementById("markbtn").onclick = mark;
+  document.getElementById("markbtn").style.cursor = "pointer";
 
   // console.log(map.value);
 }

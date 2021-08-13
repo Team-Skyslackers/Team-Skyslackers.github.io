@@ -130,19 +130,19 @@
     </div>
     <hr>
     <div id = 'uploadmap' class = 'tabcontent' style="display: block;">
-      <input class = "upload" id="audio_file" type="file" accept="audio/*"></input>
+      <input class = "upload" style = "font-size: 12px;" id="audio_file" type="file" accept="audio/*"></input>
       <div class="player">
         <div style="display: flex; flex-direction: row; align-items: center; gap: 12px"> 
-          <div class = "undo" onclick = "undo()"><i class="fas fa-undo"></i></div>
-          <div class="playpause-track" onclick="playpauseTrack()"><i class="fas fa-play"></i></div>
-          <div class="marker" onclick="mark()"><i class="fas fa-map-pin"></i></div>
+          <div id = "undobtn" class = "undo" onclick = "" style = "cursor: not-allowed;"><i class="fas fa-undo"></i></div>
+          <div id = "playbtn" class="playpause-track" onclick=""style = "cursor: not-allowed;"><i class="fas fa-play"></i></div>
+          <div id = "markbtn" class="marker" onclick=""style = "cursor: not-allowed;"><i class="fas fa-map-pin"></i></div>
         </div>
         <div id='markbar' style='width: 90%; height: 24px;'>
           <!-- <i id="1" class="fas fa-map-marker" style="position: absolute; left: 1361px; top:395px; transform: scale(0.7, 1); color: rgb(223, 16, 16);"><span class="hw">1.05</span></i> -->
         </div>
         <div class="slider_container">
           <div id="current-time" style="padding: 10px;">00:00</div>
-          <input id="music-slider" type="range" min="0" max="100000" value="0" class="slider" onchange="seekTo()" onmousedown="stopUpdate()"
+          <input id="music-slider"type="range" min="0" max="100000" value="0" class="slider" onchange="seekTo()" onmousedown="stopUpdate()"
           onmouseup = "startUpdate()">
           <div id="total-duration" style="padding: 10px;">00:00</div>
         </div>
@@ -154,6 +154,7 @@
         <table id='tbl' class = "table table-hover" style="margin: auto; text-align: center;"></table>
 
         <div style = "text-align: center;">Song Name</div>
+        <!-- <div style = "text-align: center; font-size: 12px;">(Please name your map according to this format: songname + (author name +'s version). Example: Cyberpunk(David's version))</div> -->
         <div style = "text-align: center;">
           <input id = 'name' style = "align-items: center;"></input>
         </div>
