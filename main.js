@@ -21,10 +21,6 @@ function getUTCDateAndTime(){
   d.getUTCHours().toString().padStart(2, '0') + ':' + d.getUTCMinutes().toString().padStart(2, '0') + ':' + d.getUTCSeconds().toString().padStart(2, '0');
 }
 
-// Press tab to go to next input
-$(".inputs").keyup(e => {
-  if (e.keyCode === 9) $(this).next('.inputs').focus();
-});
 
 // Register function
 function RegisterUser(email, password, confirmPassword){
@@ -205,7 +201,6 @@ function mark(){
   $("#tbl_card").scrollTop($("#t"+cur_pin).position().top);
 
   setTimeout(function() { 
-    console.log("bye");
     document.getElementById("t"+cur_pin).style.backgroundColor = "";
   }, 1000);
 }
@@ -214,7 +209,6 @@ function draw(item, index) {
   let leftpx = $("#music-slider").position().left;
   let rightpx = leftpx + $("#music-slider").width();
   let pin_pos = item/duration * (rightpx-leftpx) + leftpx;
-  console.log(duration);
   let ct_pos = leftpx - 20;
 
   $("#current-time").css({
@@ -246,17 +240,36 @@ function draw(item, index) {
     transform: "scale(0.7,1)",
     color: "rgb(223,16,16)"
   })
-  console.log(result);
-  console.log(result[item]);
   let value = (result[item]==undefined)? '':result[item];
   markerTableHTML = "<tr id = t"+ (index+1).toString(10) + "><td width=\"200px\">"+(index+1).toString(10)+
     "<a id = a"+ (index+1).toString(10) +"></a>" + "</td><td width=\"200px\">"+ (Math.round(item*100)/100).toString(10)+ 
-    "</td><td><input type=\"text\" id=\"i" + (index+1).toString(10) + "\" value =" + value +"></input></td>"+
+    "</td><td><input type=\"text\" id=\"i" + (index+1).toString(10) + "\" value =\"" + value +"\" maxlength=1 pattern=\"[A-Za-z]\"></input></td>"+
     "<td><i class=\"fas fa-trash-alt\" id=\"d"+(index+1).toString(10)+
     "\" onclick = \"deletepin(event)\"" + "></i></td>"+ "</tr>";
   $("#tbl").append(markerTableHTML);
-  
+  $("#i" + (index+1).toString(10)).keyup(function(){
+    if ($(this).val().length == $(this).attr("maxlength")){
+      $("#i" + (index+2)).select()
+    }
+  })
+
 }
+
+$(window).keydown(e => {
+  if (file == null){
+    return
+  }
+  // space to pause
+  if (e.keyCode == 32){
+    $("#playbtn").focus();
+  }
+
+  // 'm' to mark
+  if (e.keyCode == 77) {
+    mark()
+  }
+})
+
 // Load the first track in the tracklist
 let duration;
 var file;
@@ -284,6 +297,8 @@ audio_file.onchange = function() {
   document.getElementById("undobtn").style.cursor = "pointer";
   document.getElementById("markbtn").onclick = mark;
   document.getElementById("markbtn").style.cursor = "pointer";
+
+  $("#playbtn").focus();
 }
 
 function stopUpdate() {
@@ -332,7 +347,6 @@ function deletepin(e) {
 function jump(e) {
   document.getElementById("t"+e.target.offsetParent.id).style.backgroundColor = "rgb(100,200,200)";
   setTimeout(function() { 
-    console.log("bye");
     document.getElementById("t"+e.target.offsetParent.id).style.backgroundColor = "";
   }, 1000);
 }
