@@ -21,6 +21,7 @@ function getUTCDateAndTime(){
   d.getUTCHours().toString().padStart(2, '0') + ':' + d.getUTCMinutes().toString().padStart(2, '0') + ':' + d.getUTCSeconds().toString().padStart(2, '0');
 }
 
+
 // Register function
 function RegisterUser(email, password, confirmPassword){
   if (password != confirmPassword){
@@ -102,6 +103,22 @@ function SignOut(){
   });
 }
 
+// Send reset password email
+function ResetPasswordViaEmail(){
+  firebase.auth().sendPasswordResetEmail($("#inputEmail").val())
+      .then(() => {
+          alert("Password reset email sent!\nPlease check your inbox.");
+          // Password reset email sent!
+          // ..
+      })
+      .catch((error) => {
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          alert(errorMessage);
+          // ..
+      });
+}
+
 // Change in authentication state
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
@@ -157,7 +174,7 @@ let csvText = '';
 let markerPinHTML = "";
 let markerTableHTML = "";
 let songlistHTML = "";
-let pin_num = 0;
+let max_pin_num = 0;
 var result = {};
 
 
@@ -173,16 +190,25 @@ function mark(){
   history.push(curr_time);
   pinned = pinned.sort((a, b) => a - b);
   // console.log(pinned);
-  pin_num += 1;
+  max_pin_num += 1;
   pinned.forEach(draw);
+
+  // get current pin number
+  var cur_pin = pinned.indexOf(curr_time) + 1;
   
+  // Jump to the new entry
+  document.getElementById("t"+cur_pin).style.backgroundColor = "rgb(100,200,200)";
+  $("#tbl_card").scrollTop($("#t"+cur_pin).position().top);
+
+  setTimeout(function() { 
+    document.getElementById("t"+cur_pin).style.backgroundColor = "";
+  }, 1000);
 }
 
 function draw(item, index) {
   let leftpx = $("#music-slider").position().left;
   let rightpx = leftpx + $("#music-slider").width();
   let pin_pos = item/duration * (rightpx-leftpx) + leftpx;
-  console.log(duration);
   let ct_pos = leftpx - 20;
 
   $("#current-time").css({
@@ -198,7 +224,13 @@ function draw(item, index) {
     "<span class=\"hw\">"+ (Math.round(item*100)/100).toString(10) +"</span></i>"+"</a>" ;
   if (index == 0) {
     $("#markbar").html("");
-    $("#tbl").html("<tr><th>No.</th><th>Time</th><th>Pos</th><th>Delete</th></tr>");
+    $("#tbl").html("\
+    <tr>\
+      <th style='width: 30%'>No.</th>\
+      <th style='width: 30%'>Time</th>\
+      <th style='width: 30%'>Pos</th>\
+      <th style='width: 10%'>Delete</th>\
+    </tr>");
   }
   $("#markbar").append(markerPinHTML);
   $('#'+(index + 1)).css({
@@ -208,17 +240,36 @@ function draw(item, index) {
     transform: "scale(0.7,1)",
     color: "rgb(223,16,16)"
   })
-  console.log(result);
-  console.log(result[item]);
   let value = (result[item]==undefined)? '':result[item];
   markerTableHTML = "<tr id = t"+ (index+1).toString(10) + "><td width=\"200px\">"+(index+1).toString(10)+
     "<a id = a"+ (index+1).toString(10) +"></a>" + "</td><td width=\"200px\">"+ (Math.round(item*100)/100).toString(10)+ 
-    "</td><td><input id=\"i" + (index+1).toString(10) + "\" value =" + value +"></input></td>"+
+    "</td><td><input type=\"text\" id=\"i" + (index+1).toString(10) + "\" value =\"" + value +"\" maxlength=1 pattern=\"[A-Za-z]\"></input></td>"+
     "<td><i class=\"fas fa-trash-alt\" id=\"d"+(index+1).toString(10)+
     "\" onclick = \"deletepin(event)\"" + "></i></td>"+ "</tr>";
   $("#tbl").append(markerTableHTML);
-  
+  $("#i" + (index+1).toString(10)).keyup(function(){
+    if ($(this).val().length == $(this).attr("maxlength")){
+      $("#i" + (index+2)).select()
+    }
+  })
+
 }
+
+$(window).keydown(e => {
+  if (file == null){
+    return
+  }
+  // space to pause
+  if (e.keyCode == 32){
+    $("#playbtn").focus();
+  }
+
+  // 'm' to mark
+  if (e.keyCode == 77) {
+    mark()
+  }
+})
+
 // Load the first track in the tracklist
 let duration;
 var file;
@@ -240,6 +291,16 @@ audio_file.onchange = function() {
   clearInterval(updateTimer);
   resetValues();
   updateTimer = setInterval(seekUpdate, 10);
+  document.getElementById("playbtn").onclick = playpauseTrack;
+  document.getElementById("playbtn").style.cursor = "pointer";
+  document.getElementById("undobtn").onclick = undo;
+  document.getElementById("undobtn").style.cursor = "pointer";
+  document.getElementById("markbtn").onclick = mark;
+  document.getElementById("markbtn").style.cursor = "pointer";
+  document.getElementById("submitbtn").onclick = submit_data;
+  document.getElementById("submitbtn").style.cursor = "pointer";
+
+  $("#playbtn").focus();
 }
 
 function stopUpdate() {
@@ -288,84 +349,90 @@ function deletepin(e) {
 function jump(e) {
   document.getElementById("t"+e.target.offsetParent.id).style.backgroundColor = "rgb(100,200,200)";
   setTimeout(function() { 
-    console.log("bye");
     document.getElementById("t"+e.target.offsetParent.id).style.backgroundColor = "";
   }, 1000);
 }
 
 async function submit_data(){
-  let repeat = 0;
-  console.log(document.getElementById("name").value);
-  await DB.ref('songs').orderByChild('title').equalTo(document.getElementById("name").value).get().then(snapshot => {
-    console.log(snapshot.exists());
-    if (snapshot.exists()){
-      repeat = 1;
-      alert("Map name already exists. Try a new one.");
-    }
-  });
-  //if no repeat, can proceed
-  if (repeat != 1) { 
-    for (let idx = 0; idx < pinned.length; idx++) {
-      output.push([pinned[idx],document.getElementById("i"+(idx+1).toString(10)).value]);
-    }
-
-
-    output.forEach((row, ind) => {
-      const properValues = [row[0], row[1]];
-      return (csvText += `${properValues.join(',')}\r\n`);
-    });
-
-    console.log(csvText);
-    window.URL = window.webkitURL || window.URL;
-    var contentType = 'text/csv';
-    var csvFile = new Blob([csvText], {type: contentType});
-    const ref1 = firebase.storage().ref().child('musicFile/'+document.getElementById("name").value+'_map.csv');
-    // [START storage_upload_blob]
-    // 'file' comes from the Blob or File API
-    await ref1.put(csvFile).then((snapshot) => {
-      console.log('Uploaded a blob or file!');
-    });
-    const ref2 = firebase.storage().ref().child('musicFile/'+document.getElementById("name").value+'_song.csv');
-    // [START storage_upload_blob]
-    // 'file' comes from the Blob or File API
-    await ref2.put(file).then((snapshot) => {
-      console.log('Uploaded a blob or file!');
-    });
-    let map_url;
-    let song_url
-    const p1 = ref1.getDownloadURL();
-    await p1.then((url)=> {
-      // console.log(url);
-      map_url = url;
-    });
-    const p2 = ref2.getDownloadURL();
-    await p2.then((url)=>{
-      // console.log(url);
-      song_url = url;
-    });
-    // console.log(map_url);
-    // console.log(song_url);
-    console.log(currentUser.uid);
-
-
-    
-    DB.ref('songs/'+document.getElementById("name").value).set({
-      details: {
-        author: currentUser.uid,
-        creationTime: getUTCDateAndTime()
-      },
-      
-      difficulty: document.getElementById("LOD").value,
-
-      storageLink: {
-        csv: map_url,
-        mp3: song_url
-      }
-    })
-    alert("Song and map submitted");
-    location.reload();
+  // console.log(document.getElementById("LOD").value);
+  if (document.getElementById("name").value == '' || document.getElementById("LOD").value == '' ) {
+    alert("Please fill in all details and submit again.")
   }
+  else {
+    let repeat = 0;
+    console.log(document.getElementById("name").value);
+    await DB.ref('songs').orderByChild('title').equalTo(document.getElementById("name").value).get().then(snapshot => {
+      console.log(snapshot.exists());
+      if (snapshot.exists()){
+        repeat = 1;
+        alert("Map name already exists. Try a new one.");
+      }
+    });
+    //if no repeat, can proceed
+    if (repeat != 1) { 
+      for (let idx = 0; idx < pinned.length; idx++) {
+        output.push([pinned[idx],document.getElementById("i"+(idx+1).toString(10)).value]);
+      }
 
+
+      output.forEach((row, ind) => {
+        const properValues = [row[0], row[1]];
+        return (csvText += `${properValues.join(',')}\r\n`);
+      });
+
+      console.log(csvText);
+      window.URL = window.webkitURL || window.URL;
+      var contentType = 'text/csv';
+      var csvFile = new Blob([csvText], {type: contentType});
+      const ref1 = firebase.storage().ref().child('musicFile/'+document.getElementById("name").value+'_map.csv');
+      // [START storage_upload_blob]
+      // 'file' comes from the Blob or File API
+      await ref1.put(csvFile).then((snapshot) => {
+        console.log('Uploaded a blob or file!');
+      });
+      const ref2 = firebase.storage().ref().child('musicFile/'+document.getElementById("name").value+'_song.mp3');
+      // [START storage_upload_blob]
+      // 'file' comes from the Blob or File API
+      await ref2.put(file).then((snapshot) => {
+        console.log('Uploaded a blob or file!');
+      });
+      let map_url;
+      let song_url
+      const p1 = ref1.getDownloadURL();
+      await p1.then((url)=> {
+        // console.log(url);
+        map_url = url;
+      });
+      const p2 = ref2.getDownloadURL();
+      await p2.then((url)=>{
+        // console.log(url);
+        song_url = url;
+      });
+      // console.log(map_url);
+      // console.log(song_url);
+      console.log(currentUser.uid);
+
+
+      
+      DB.ref('songs/'+document.getElementById("name").value).set({
+        details: {
+          author: currentUser.uid,
+          creationTime: getUTCDateAndTime()
+        },
+        
+        difficulty: document.getElementById("LOD").value,
+
+        storageLink: {
+          csv: map_url,
+          mp3: song_url
+        }
+      })
+      alert("Song and map submitted");
+      location.reload();
+    }
+
+  }
+ 
 }
 
 function seekTo() {
@@ -528,7 +595,9 @@ async function LoadSong(){
   // });
 
   $('#mapeditor').append($('.player')[0]);
+  $('#mapeditor').append($('#tbl_card'));
   $('#mapeditor').append($('#data'));
+
   $('#buttons').html('');
   $('#buttons').append('<button id = \'updatebtn\' class = \"btn btn-primary\" onclick=\"update_curr()\">UPDATE</button>')
   $('#buttons').append('<button id = \'deletebtn\' class = \"btn btn-primary\" onclick=\"delete_curr()\">DELETE</button>')
@@ -536,7 +605,12 @@ async function LoadSong(){
     backgroundColor: "rgb(223,16,16)",
     border: "1px solid rgb(223,16,16)"
   })
-  
+  document.getElementById("playbtn").onclick = playpauseTrack;
+  document.getElementById("playbtn").style.cursor = "pointer";
+  document.getElementById("undobtn").onclick = undo;
+  document.getElementById("undobtn").style.cursor = "pointer";
+  document.getElementById("markbtn").onclick = mark;
+  document.getElementById("markbtn").style.cursor = "pointer";
 
   // console.log(map.value);
 }
@@ -549,7 +623,7 @@ async function delete_curr() {
   await ref1.delete().then((snapshot) => {
     console.log('deleted!');
   });
-  const ref2 = firebase.storage().ref().child('musicFile/'+document.getElementById("name").value+'_song.csv');
+  const ref2 = firebase.storage().ref().child('musicFile/'+document.getElementById("name").value+'_song.mp3');
   // [START storage_upload_blob]
   // 'file' comes from the Blob or File API
   await ref2.delete().then((snapshot) => {
