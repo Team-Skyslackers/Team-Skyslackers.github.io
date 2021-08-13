@@ -197,12 +197,7 @@ function mark(){
   var cur_pin = pinned.indexOf(curr_time) + 1;
   
   // Jump to the new entry
-  document.getElementById("t"+cur_pin).style.backgroundColor = "rgb(100,200,200)";
-  $("#tbl_card").scrollTop($("#t"+cur_pin).position().top);
-
-  setTimeout(function() { 
-    document.getElementById("t"+cur_pin).style.backgroundColor = "";
-  }, 1000);
+  highlightByID(cur_pin)
 }
 
 function draw(item, index) {
@@ -243,7 +238,7 @@ function draw(item, index) {
   let value = (result[item]==undefined)? '':result[item];
   markerTableHTML = "<tr id = t"+ (index+1).toString(10) + "><td width=\"200px\">"+(index+1).toString(10)+
     "<a id = a"+ (index+1).toString(10) +"></a>" + "</td><td width=\"200px\">"+ (Math.round(item*100)/100).toString(10)+ 
-    "</td><td><input type=\"text\" id=\"i" + (index+1).toString(10) + "\" value =\"" + value +"\" maxlength=1  onkeypress='return ((event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122))'></input></td>"+
+    "</td><td><input type=\"text\" id=\"i" + (index+1).toString(10) + "\" value =\"" + value +"\" maxlength=1  onkeypress='return directionInputsCheck(event)'></input></td>"+
     "<td><i class=\"fas fa-trash-alt\" id=\"d"+(index+1).toString(10)+
     "\" onclick = \"deletepin(event)\"" + "></i></td>"+ "</tr>";
   $("#tbl").append(markerTableHTML);
@@ -257,8 +252,14 @@ function draw(item, index) {
   $("#i" + (index+1).toString(10)).click(function(){
     $(this).select();
   })
+}
 
-  // item is the time of the entry
+function directionInputsCheck(event){
+  if(event.key == 'q' || event.key == 'w' || event.key == 'e' || event.key == 'a' || event.key == 'd' || event.key == 'z' || event.key == 'x' || event.key == 'c' || 
+  event.key == 'Q' || event.key == 'W' || event.key == 'E' || event.key == 'A' || event.key == 'D' || event.key == 'Z' || event.key == 'X' || event.key == 'C') {
+    return true
+  }
+  return false
 }
 
 $(window).keydown(e => {
@@ -359,6 +360,7 @@ function highlight(e) {
 }
 
 function highlightByID(id) {
+  $("#tbl_card").scrollTop($("#t"+id).position().top);
   $("tr").css("background-color", '')
   $("#i" + id).select()
   document.getElementById("t"+id).style.backgroundColor = "rgb(100,200,200)";
