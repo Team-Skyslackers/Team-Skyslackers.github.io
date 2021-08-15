@@ -27,7 +27,7 @@
 </head>
 
 <body>
-  <div class="container mb-3" style="">
+  <div class="container mb-3" >
     <h1><strong style="color: dodgerblue;">Skyslackers</strong> Online Map Editor</h1>
   </div>
   <hr>
@@ -124,11 +124,13 @@
   <!-- music editor -->
   <div class="container d-none" id="music-editor">
     <hr>
-    <div class="tab">
-      <button class="tablinks active" onclick="openTab(event, 'uploadmap')">Upload Songs & Maps</button>
-      <button class="tablinks" onclick="openTab(event, 'edit'); Loadlist()">Edit Uploaded Items</button>
+    <div style="display: flex;" >
+      <div class="tab" display = "flex">
+        <button class="tablinks active" onclick="openTab(event, 'uploadmap')">Upload Songs & Maps</button>
+        <button class="tablinks" onclick="openTab(event, 'edit'); Loadlist()">Edit Uploaded Items</button>
+      </div>
+      <div id = "help" onclick="showCon()" style="font-size: 15px; margin-left: 2px; margin-top: 5px;" ><i class="far fa-question-circle"></i> Need help?</div>
     </div>
-    <div id = "help" onclick="showCon()"><i class="far fa-question-circle"></i> Need help?</div>
     <hr>
     <div id = 'uploadmap' class = 'tabcontent' style="display: block;">
       <input class = "upload mb-3" id="audio_file" type="file" accept="audio/*" style="width: 100%;"></input>
@@ -206,9 +208,30 @@
 
 <div class = "cov">
 	<div class = "con">
-			<p class = "ptitle">详细信息</p>
-			<p>大家好大家好大家好大家好大家好大家好大家好大家好大家好大家好大家好大家好大家好大家好大家好大家好大家好大家好大家好大家好大家好大家好大家好大家好大家好大家好</p>
-			<div onclick = "closeCon();" class = "dbt">确定</div>
+			<!-- <p class = "ptitle" style = "text-align: center;" >Help</p> -->
+      <div style = "margin-left:10px; margin-right:10px;">
+        <h5 style="text-align: center;">Upload Songs & Maps</h5>
+        <p>1. Click "Choose File" to Choose a mp3 file from your local directories</p>
+        <p>2. Click "Play/Pause" button or press "Space" key to play and pause current track. </p>
+        <p>3. Drag the thumb on the progress bar left/right or press left arrow key/right arrow key to fast forward/fast backward.</p>
+        <p>4. Click "Mark" button or press "M" key to add a pin to current time on the progress bar. Each pin reprents a bolt appearing at that specific time.</p>
+        <p>5. Click "Undo" button or press "Z" key to remove previous pins.</p>
+        <P>6. Click any pin to navigate to its details in the table.</P>
+        <p>7. Click "Delete" button in the table to remove selected pins</p>
+        <p>8. After marking, key in the positions of the bolts in the table. Eight positions are available. (See the picture below)</p>
+        <img src="Instruction.png" alt="Keyboard mapping" style = "width:500px;height:250px;margin-left: 20px;">
+        <p>9. Name your map and choose the level of difficulty.</p>
+        <p>10. Click "Submit" to upload the song and map to the community.</p>
+        <h5 style="text-align: center" >Edit Uploaded Items</h5>
+        <p>1. Choose a map from the list of maps you uploaded.</p>
+        <p>2. Add or remove pins. </p>
+        <p>3. You can change the level of difficulty.</p>
+        <p>4. After editing, click "Update" to update the new map to the databasee.</p>
+        <p>5. If you want to delete this map, click "Delete" to permanently delete this song and map from the online database.</p>
+      </div>
+      
+			
+			<div onclick = "closeCon();" class = "dbt" style = "text-align: center;">Close</div>
 	</div>
 </div>
 
