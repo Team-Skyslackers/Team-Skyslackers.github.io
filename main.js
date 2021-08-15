@@ -176,6 +176,7 @@ let markerTableHTML = "";
 let songlistHTML = "";
 let max_pin_num = 0;
 var result = {};
+let musicLoaded = false;
 
 
 function resetValues() {
@@ -243,8 +244,8 @@ function draw(item, index) {
     "\" onclick = \"deletepin(event)\"" + "></i></td>"+ "</tr>";
   $("#tbl").append(markerTableHTML);
   $("#i" + (index+1).toString(10)).keyup(function(){
-    console.log($(this).val().length)
-    console.log($(this).attr("maxlength"))
+    // console.log($(this).val().length)
+    // console.log($(this).attr("maxlength"))
     if ($(this).val().length == $(this).attr("maxlength")){
       $("#i" + (index+2)).select()
     }
@@ -263,7 +264,7 @@ function directionInputsCheck(event){
 }
 
 $(window).keydown(e => {
-  if (curr_track == '<audio></audio>'){
+  if (!musicLoaded){
     return
   }
 
@@ -279,6 +280,18 @@ $(window).keydown(e => {
   // 'm' to mark
   if (e.keyCode == 77) {
     mark()
+  }
+
+  // left
+  if (e.keyCode == 37){
+    slider.val(parseInt(slider.val())-500)
+    seekTo()
+  }
+
+  // right
+  if (e.keyCode == 39) {
+    slider.val(parseInt(slider.val())+500)
+    seekTo()
   }
 })
 
@@ -299,6 +312,7 @@ audio_file.onchange = function() {
   // let curr_track = document.createElement('audio');
   curr_track.src = URL.createObjectURL(this.files[0]);
   curr_track.load();
+  musicLoaded = true;
   // curr_track.play();
   clearInterval(updateTimer);
   resetValues();
@@ -403,8 +417,8 @@ curr_track.addEventListener("playing", function(){
 window.setInterval( function(){
   if (curr_track.paused || pinned.length == 0) return
   if (curr_track.currentTime > next_update_time) {
-    console.log(curr_track.currentTime)
-    console.log(next_index)
+    // console.log(curr_track.currentTime)
+    // console.log(next_index)
     highlightByID(next_index + 1)
     next_index++
     next_update_time = pinned[next_index];
@@ -497,25 +511,6 @@ async function submit_data(){
  
 }
 
-// keyboard left right to seek
-$(window).keydown(e => {
-  if (curr_track == "<audio></audio>"){
-    return
-  }
-
-  // left
-  if (e.keyCode == 37){
-    slider.val(parseInt(slider.val())-500)
-    seekTo()
-  }
-
-  // right
-  if (e.keyCode == 39) {
-    slider.val(parseInt(slider.val())+500)
-    seekTo()
-  }
-})
-
 function seekTo() {
   let seekto = duration * (slider.val() / 100001);
   curr_track.currentTime = seekto;
@@ -605,6 +600,7 @@ async function LoadSong(){
     duration = curr_track.duration;
   };
   curr_track.load();
+  musicLoaded = true;
     // curr_track.play();
   clearInterval(updateTimer);
   resetValues();
