@@ -263,8 +263,12 @@ function directionInputsCheck(event){
 }
 
 $(window).keydown(e => {
-  if (file == null){
+  if (curr_track == '<audio></audio>'){
     return
+  }
+
+  if (e.ctrlKey && e.key === 'z') {
+    undo()
   }
 
   // space to pause
@@ -495,7 +499,7 @@ async function submit_data(){
 
 // keyboard left right to seek
 $(window).keydown(e => {
-  if (file == null){
+  if (curr_track == "<audio></audio>"){
     return
   }
 
