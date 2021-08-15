@@ -264,7 +264,7 @@ function directionInputsCheck(event){
 }
 
 $(window).keydown(e => {
-  if (!musicLoaded){
+  if (!musicLoaded || $("#name").is(":focus")){
     return
   }
 
