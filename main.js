@@ -683,3 +683,9 @@ async function update_curr() {
 
 }
 
+function showCon(){
+	$(".cov").show();	
+}
+function closeCon(){
+	$(".cov").hide();	
+}
